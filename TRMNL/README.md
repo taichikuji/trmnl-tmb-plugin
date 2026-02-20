@@ -1,6 +1,6 @@
-# TRMNL Frank Energie Plugin
+# TRMNL TMB Plugin
 
-A TRMNL plugin to display Frank Energie electricity and gas prices.
+A TRMNL plugin to display TMB ( Barcelona Metro ) service status and outages.
 
 ## Icon
 
@@ -22,6 +22,6 @@ The plugin icon is stored in the TRMNL bundle and referenced from settings.yml.
 
 ## Templates
 
-- **full.liquid**: Default view with current price, daily average, and 24h chart.
+- **full.liquid**: Default view clear view of Metro Line, destination name, description and status of outage.
 - **half_horizontal**.liquid and **half_vertical.liquid**: Compact variants of the full view.
-- **quadrant.liquid**: Minimal view without the chart for tighter layouts.
+- **quadrant.liquid**: Minimal view. Displays the most most grave status.

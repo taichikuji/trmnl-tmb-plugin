@@ -8,28 +8,27 @@ strategy: polling
 no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
-polling_verb: post
-polling_url: 'https://frank-graphql-prod.graphcdn.app/'
-polling_headers: ''
-polling_body: |
-  {
-    "query": "query MarketPrices { marketPrices(date:\"{{ 'now' | date: '%Y-%m-%d' }}\") { electricityPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } gasPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } } }"
-  }
+polling_verb: get
+polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB'
+polling_headers: 'app_id={{ userAppId }}&app_key={{ userAppKey }}'
+polling_body: ''
 icon: media/icon.svg
-name: Frank Energie
-refresh_interval: 1440
+name: TMB Outages
+refresh_interval: 30
 custom_fields:
-- keyname: resource_type
-  field_type: select
-  name: Resource to Display
-  description: Choose which resource data to show in charts and main stats
-  options:
-  - "Electricity"
-  - "Gas"
-  default: "Electricity"
+- keyname: userAppId
+  field_type: string
+  name: App ID
+  description: Your app_id from the TMB developer portal.
+  help_text: Register for free at the <a href="https://developer.tmb.cat/docs/getting-started">developer site</a>.
+- keyname: userAppKey
+  field_type: string
+  name: App Key
+  description: Your app_key from the TMB developer portal.
+  help_text: Retrieve your app_id and app_key from the dashboard after signing up.
 - keyname: author_bio
   field_type: author_bio
   name: About This Plugin
-  description: "Created by Ivan Perez. This plugin is for Dutch residents using Frank Energie who want to monitor real-time electricity and gas prices on their TRMNL device."
-  category: "environment,finance"
-  github_url: "https://github.com/taichikuji/trmnl-frank-energie-plugin"
+  description: "Created by Ivan Perez. This plugin is for monitoring real-time metro outages in Barcelona on your TRMNL device."
+  category: "news,travel"
+  github_url: "https://github.com/taichikuji/trmnl-tmb-plugin"
