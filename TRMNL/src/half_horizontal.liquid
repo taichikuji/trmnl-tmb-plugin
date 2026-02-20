@@ -1,0 +1,57 @@
+{% render 'head_assets' %}
+
+<div class="layout layout--col gap--space-between">
+
+  {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
+  {% if resource_type == 'gas' %}
+    {% assign primary_data = data.marketPrices.gasPrices %}
+    {% assign primary_label = "Gas" %}
+    {% assign secondary_data = data.marketPrices.electricityPrices %}
+    {% assign secondary_label = "Elec" %}
+  {% else %}
+    {% assign primary_data = data.marketPrices.electricityPrices %}
+    {% assign primary_label = "Electricity" %}
+    {% assign secondary_data = data.marketPrices.gasPrices %}
+    {% assign secondary_label = "Gas" %}
+  {% endif %}
+
+  <div class="grid h-full">
+
+    <!-- Left Column: Stats -->
+    <div class="col--span-3 col gap--space-between">
+
+      <!-- Primary Resource Stats -->
+      <div class="grid">
+        <div class="row">
+          {% render 'stat_grid'
+            , data: primary_data
+            , currency: "€"
+            , label_prefix: primary_label
+          %}
+        </div>
+      </div>
+
+
+      <!-- Secondary Resource Stats -->
+      <div class="grid">
+        <div class="row">
+          {% render 'secondary_stat_grid'
+            , data: secondary_data
+            , currency: "€"
+            , label_prefix: secondary_label
+          %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Chart -->
+    <div class="col--span-3 col gap--space-between">
+      <!-- Render the shared chart component -->
+      {% render 'energy_chart', id: "energy-chart" | append_random, electricity: primary_data, gas: secondary_data, variant: "full", resource_type: resource_type %}
+    </div>
+  </div>
+
+</div>
+{% render 'title_bar'
+  , instance: primary_label %}

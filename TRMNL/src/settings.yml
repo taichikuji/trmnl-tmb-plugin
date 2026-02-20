@@ -1,0 +1,35 @@
+#
+# Changes to this file will be overwritten by `trmnlp pull`.
+#
+# Docs: https://help.usetrmnl.com/en/articles/10542599-importing-and-exporting-private-plugins#h_581fb988f0
+#
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: post
+polling_url: 'https://frank-graphql-prod.graphcdn.app/'
+polling_headers: ''
+polling_body: |
+  {
+    "query": "query MarketPrices { marketPrices(date:\"{{ 'now' | date: '%Y-%m-%d' }}\") { electricityPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } gasPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } } }"
+  }
+icon: media/icon.svg
+name: Frank Energie
+refresh_interval: 1440
+custom_fields:
+- keyname: resource_type
+  field_type: select
+  name: Resource to Display
+  description: Choose which resource data to show in charts and main stats
+  options:
+  - "Electricity"
+  - "Gas"
+  default: "Electricity"
+- keyname: author_bio
+  field_type: author_bio
+  name: About This Plugin
+  description: "Created by Ivan Perez. This plugin is for Dutch residents using Frank Energie who want to monitor real-time electricity and gas prices on their TRMNL device."
+  category: "environment,finance"
+  github_url: "https://github.com/taichikuji/trmnl-frank-energie-plugin"

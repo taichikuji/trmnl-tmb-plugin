@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Frank Energie">
+  <rect x="10" y="10" width="492" height="492" rx="90" fill="none" stroke="#E76F55" stroke-width="20"/>
+  
+  <g fill="none" stroke="#E76F55" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M224 64 L128 288 H240 L192 448 L384 208 H272 L320 64 Z"/>
+    <circle cx="384" cy="384" r="48"/>
+  </g>
+</svg>
