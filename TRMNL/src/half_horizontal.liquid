@@ -1,65 +1,55 @@
-{% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}
 {% assign total_issues_count = 0 %}
-{% assign sorted_alerts = data.alerts | sort: "tstamp" | reverse %}
 
 <div class="screen">
-  <table class="table table--indexed" data-table-limit="true">
+  <table class="table table--indexed lg:table--base" data-table-limit="true">
     <thead>
       <tr>
-        <th class="w--auto w--min-12">
-          <span class="title title--small"><img class="image image-dither h--6" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" /></span>
+        <th class="w--auto w--min-12 lg:w--min-20">
+          <span class="title title--small lg:title--medium">
+            <img class="image image-dither h--6 lg:h--10" src="{{ icon_url }}" />
+          </span>
         </th>
         <th class="w--auto">
-          <span class="title title--small">Line</span>
+          <span class="title title--small lg:title--medium">Line</span>
         </th>
-        <th class="w--auto w--min-32">
-          <span class="title title--small">Status</span>
+        <th class="w--auto w--min-32 lg:w--min-48">
+          <span class="title title--small lg:title--medium">Status</span>
         </th>
       </tr>
     </thead>
     <tbody>
-
       {% for line_string in lines_data %}
         {% assign line_parts = line_string | split: ":" %}
         {% assign current_line_id = line_parts[0] %}
         {% assign current_line_route = line_parts[1] %}
-
         {% assign line_has_issue = false %}
         {% assign combined_descriptions = "" %}
-
         {% assign status_pairs_string = "" %}
 
         {% for alert in sorted_alerts %}
           {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
           {% assign e_code_prefix = e_code | slice: 0, 2 %}
-
           {% if e_code_prefix == 'PP' %}
-
             {% assign matches_this_line = false %}
             {% for entity in alert.entities %}
               {% if entity.line_name == current_line_id %}
-                {% assign matches_this_line = true %}
-              {% endif %}
-              {% if current_line_id == "FM" and entity.line_code == "99" %}
                 {% assign matches_this_line = true %}
               {% endif %}
             {% endfor %}
 
             {% if matches_this_line %}
               {% assign line_has_issue = true %}
-
               {% assign begin_sec = alert.disruption_dates[0].begin_date | divided_by: 1000 %}
               {% assign begin_formatted = begin_sec | date: "%d/%m" %}
-
               {% assign end_sec = alert.disruption_dates[0].end_date | divided_by: 1000 %}
               {% assign end_formatted = end_sec | date: "%d/%m" %}
 
               {% capture desc_html %}
-      <div class="gap--small"> 
-        <span class="text--gray-25 text--justify">&bull;</span> 
-        <span data-clamp="1">{{ alert.publications[0].textEn }}</span>
-      </div>
-      {% endcapture %}
+                <div class="gap--small">
+                  <span class="text--gray-25 text--justify">&bull;</span>
+                  <span data-clamp="1" data-clamp-lg="2">{{ alert.publications[0].textEn }}</span>
+                </div>
+              {% endcapture %}
               {% assign combined_descriptions = combined_descriptions | append: desc_html %}
 
               {% assign severity = alert.categories.effect_status %}
@@ -69,55 +59,48 @@
               {% unless status_pairs_string contains status_key %}
                 {% assign status_pairs_string = status_pairs_string | append: status_key | append: "," %}
               {% endunless %}
-
             {% endif %}
           {% endif %}
         {% endfor %}
 
         {% if line_has_issue %}
           {% assign total_issues_count = total_issues_count | plus: 1 %}
-
           <tr>
             <td>
-              <span class="meta w--10 rounded">
-                <span class="index text-stroke text-stroke--medium">{{ current_line_id }}</span>
+              <span class="meta w--10 lg:w--14 rounded">
+                <span class="index text-stroke text-stroke--medium lg:text--large">{{ current_line_id }}</span>
               </span>
             </td>
             <td>
-              <span class="label" data-clamp="1">{{ current_line_route }}</span>
-              <span class="label label--inverted label--small">{{ begin_formatted }}-{{ end_formatted }}</span>
-              <div class="text--small text--gray description">{{ combined_descriptions }}</div>
+              <span class="label lg:label--large" data-clamp="1">{{ current_line_route }}</span>
+              <span class="label label--inverted label--small lg:label--base">{{ begin_formatted }}-{{ end_formatted }}</span>
+              <div class="text--small lg:text--base text--gray description">{{ combined_descriptions }}</div>
             </td>
             <td>
               {% assign unique_pairs = status_pairs_string | split: "," %}
               {% for pair in unique_pairs %}
                 {% if pair == blank %}
                   {% continue %}{% endif %}
-
                 {% assign parts = pair | split: "|" %}
                 {% assign s_severity = parts[0] %}
                 {% assign s_cause = parts[1] %}
-
                 <div style="margin-bottom: 2px;">
-                  <span class="label label--white label--small">{{ s_cause }}</span>
-                  <span class="label label--inverted label--small">{{ s_severity }}</span>
+                  <span class="label label--white label--small lg:label--base">{{ s_cause }}</span>
+                  <span class="label label--inverted label--small lg:label--base">{{ s_severity }}</span>
                 </div>
               {% endfor %}
             </td>
           </tr>
         {% endif %}
-
       {% endfor %}
 
       {% if total_issues_count == 0 %}
         <tr>
           <td colspan="3" style="text-align: center; vertical-align: middle; height: 200px;">
-            <div class="title title--small" style="margin-top: 10px;">Servei Normal</div>
-            <div class="text--small text--gray">Totes les línies funcionen correctament.</div>
+            {% render 'empty_state' %}
           </td>
         </tr>
       {% endif %}
-
     </tbody>
   </table>
 </div>

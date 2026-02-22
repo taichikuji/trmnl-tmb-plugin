@@ -1,5 +1,3 @@
-{% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}
-{% assign sorted_alerts = data.alerts | sort: "tstamp" | reverse %}
 {% assign target_alert = nil %}
 
 {% comment %} Find the most severe (PP) alert {% endcomment %}
@@ -41,24 +39,27 @@
     {% endfor %}
 
     <div class="layout__item text--center">
-      <img class="image image-dither h--10" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" />
-      <div class="title title--large portrait:title--small">{{ line_id }}</div>
-      <div class="label">{{ line_name }}</div>
-      <div class="gap--small"></div>
+      <img class="image image-dither h--10 lg:h--16" src="{{ icon_url }}" />
+      <div class="title title--large lg:title--xlarge portrait:title--small">{{ line_id }}</div>
+      <div class="label lg:label--large">{{ line_name }}</div>
+      <div class="gap--small lg:gap--medium"></div>
       <div>
-        <span class="label label--inverted">{{ severity }}</span>
-        <span class="label label--white">{{ cause }}</span>
+        <span class="label label--inverted lg:label--xlarge">{{ severity }}</span>
+        <span class="label label--white lg:label--xlarge">{{ cause }}</span>
       </div>
-      <div class="gap--small"></div>
-      <div class="text--small description" data-clamp="4">
+      <div class="gap--small lg:gap--medium"></div>
+      <div
+        class="text--small lg:text--base description"
+        data-clamp="4"
+        data-clamp-lg="6">
         {{ description }}
       </div>
     </div>
   {% else %}
     <div class="layout__item text--center">
-      <img class="image image-dither h--10" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" />
-      <div class="title title--medium" style="margin-top: 10px;">Servei Normal</div>
-      <div class="text--small text--gray">Totes les línies funcionen correctament.</div>
+      <img class="image image-dither h--10 lg:h--16" src="{{ icon_url }}" />
+      <div class="title title--medium lg:title--large" style="margin-top: 10px;">Servei Normal</div>
+      <div class="text--small lg:text--base text--gray">Totes les línies funcionen correctament.</div>
     </div>
   {% endif %}
 </div>
