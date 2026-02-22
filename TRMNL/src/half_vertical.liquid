@@ -24,7 +24,6 @@
         {% assign line_has_issue = false %}
         {% assign combined_descriptions = "" %}
 
-        {% comment %} Loop through sorted alerts {% endcomment %}
         {% for alert in sorted_alerts %}
           {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
           {% assign e_code_prefix = e_code | slice: 0, 2 %}
@@ -42,21 +41,20 @@
             {% endfor %}
 
             {% if matches_this_line %}
-            {% assign line_has_issue = true %}
+              {% assign line_has_issue = true %}
 
-              {% comment %} Variables for the consolidated string {% endcomment %}
               {% assign begin_sec = alert.disruption_dates[0].begin_date | divided_by: 1000 %}
-              {% assign begin_formatted = begin_sec | date: "%b %d" %}
+              {% assign begin_formatted = begin_sec | date: "%d/%m" %}
 
               {% assign end_sec = alert.disruption_dates[0].end_date | divided_by: 1000 %}
-              {% assign end_formatted = end_sec | date: "%b %d" %}
+              {% assign end_formatted = end_sec | date: "%d/%m" %}
 
               {% assign severity = alert.categories.effect_status %}
               {% assign cause = alert.categories.cause_code %}
 
               {% capture desc_html %}
       <div class="gap--small" style="margin-top: 6px; display: flex; align-items: center; flex-wrap: wrap;">
-        <span class="label label--inverted label--small">{{ begin_formatted }} - {{ end_formatted }}</span> 
+        <span class="label label--inverted label--small">{{ begin_formatted }}-{{ end_formatted }}</span> 
         <span class="label label--white label--small" style="margin-left: 4px;">{{ cause }}</span>
         <span class="label label--inverted label--small" style="margin-left: 4px;">{{ severity }}</span>
       </div>

@@ -18,7 +18,6 @@
       </tr>
     </thead>
     <tbody>
-
       {% for line_string in lines_data %}
         {% assign line_parts = line_string | split: ":" %}
         {% assign current_line_id = line_parts[0] %}
@@ -49,14 +48,13 @@
               {% assign line_has_issue = true %}
 
               {% assign begin_sec = alert.disruption_dates[0].begin_date | divided_by: 1000 %}
-              {% assign begin_formatted = begin_sec | date: "%b %d" %}
+              {% assign begin_formatted = begin_sec | date: "%d/%m" %}
 
               {% assign end_sec = alert.disruption_dates[0].end_date | divided_by: 1000 %}
-              {% assign end_formatted = end_sec | date: "%b %d" %}
+              {% assign end_formatted = end_sec | date: "%d/%m" %}
 
               {% capture desc_html %}
       <div class="gap--small">
-        <span class="label label--inverted label--small">{{ begin_formatted }} - {{ end_formatted }}</span> 
         <span class="text--gray-25 text--justify">&bull;</span> 
         <span data-clamp="1">{{ alert.publications[0].textEn }}</span>
       </div>
@@ -86,6 +84,7 @@
             </td>
             <td>
               <span class="label" data-clamp="1">{{ current_line_route }}</span>
+              <span class="label label--inverted label--small">{{ begin_formatted }}-{{ end_formatted }}</span>
               <div class="text--small text--gray description">{{ combined_descriptions }}</div>
             </td>
             <td>

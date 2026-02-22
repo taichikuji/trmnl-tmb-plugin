@@ -1,42 +1,64 @@
-{% render 'head_assets' %}
+{% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}
+{% assign sorted_alerts = data.alerts | sort: "tstamp" | reverse %}
+{% assign target_alert = nil %}
 
-  <div class="layout layout--col gap--space-between">
+{% comment %} Find the most severe (PP) alert {% endcomment %}
+{% for alert in sorted_alerts %}
+  {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
+  {% assign e_code_prefix = e_code | slice: 0, 2 %}
 
-  {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
-  {% if resource_type == 'gas' %}
-    {% assign primary_data = data.marketPrices.gasPrices %}
-    {% assign primary_label = "Gas" %}
-    {% assign secondary_data = data.marketPrices.electricityPrices %}
-    {% assign secondary_label = "Elec" %}
-  {% else %}
-    {% assign primary_data = data.marketPrices.electricityPrices %}
-    {% assign primary_label = "Electricity" %}
-    {% assign secondary_data = data.marketPrices.gasPrices %}
-    {% assign secondary_label = "Gas" %}
+  {% if e_code_prefix == 'PP' %}
+    {% assign target_alert = alert %}
+    {% break %}
   {% endif %}
+{% endfor %}
 
-  <!-- Primary Resource Section -->
-  <div class="grid">
-    <div class="row">
-      {% render 'stat_grid'
-        , data: primary_data
-        , currency: "€"
-        , label_prefix: primary_label
-      %}
+<div class="layout layout--col layout--center-center">
+  {% if target_alert %}
+    {% assign severity = target_alert.categories.effect_status %}
+    {% assign cause = target_alert.categories.cause_code %}
+    {% assign description = target_alert.publications[0].textEn %}
+
+    {% assign line_id = nil %}
+    {% for entity in target_alert.entities %}
+      {% if entity.line_name %}
+        {% assign line_id = entity.line_name %}
+      {% elsif entity.line_code == "99" %}
+        {% assign line_id = "FM" %}
+      {% endif %}
+      {% if line_id %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% assign line_name = line_id %}
+    {% for line_string in lines_data %}
+      {% assign parts = line_string | split: ":" %}
+      {% if parts[0] == line_id %}
+        {% assign line_name = parts[1] %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="layout__item text--center">
+      <img class="image image-dither h--10" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" />
+      <div class="title title--large portrait:title--small">{{ line_id }}</div>
+      <div class="label">{{ line_name }}</div>
+      <div class="gap--small"></div>
+      <div>
+        <span class="label label--inverted">{{ severity }}</span>
+        <span class="label label--white">{{ cause }}</span>
+      </div>
+      <div class="gap--small"></div>
+      <div class="text--small description" data-clamp="4">
+        {{ description }}
+      </div>
     </div>
-  </div>
-
-  <!-- Secondary Resource Section -->
-  <div class="grid">
-    <div class="row">
-      {% render 'secondary_stat_grid'
-        , data: secondary_data
-        , currency: "€"
-        , label_prefix: secondary_label
-      %}
+  {% else %}
+    <div class="layout__item text--center">
+      <img class="image image-dither h--10" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" />
+      <div class="title title--medium" style="margin-top: 10px;">Servei Normal</div>
+      <div class="text--small text--gray">Totes les línies funcionen correctament.</div>
     </div>
-  </div>
-
+  {% endif %}
 </div>
-{% render 'title_bar'
-  , instance: primary_label %}
