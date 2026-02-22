@@ -1,5 +1,6 @@
 {% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}
 {% assign total_issues_count = 0 %}
+{% assign sorted_alerts = data.alerts | sort: "tstamp" | reverse %}
 
 <div class="screen">
   <table class="table table--indexed" data-table-limit="true">
@@ -9,7 +10,7 @@
           <span class="title title--small"><img class="image image-dither h--6" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" /></span>
         </th>
         <th class="w--auto">
-          <span class="title title--small">Line</span>
+          <span class="title title--small">Destination</span>
         </th>
         <th class="w--auto w--min-32">
           <span class="title title--small">Status</span>
@@ -28,7 +29,7 @@
 
         {% assign status_pairs_string = "" %}
 
-        {% for alert in data.alerts %}
+        {% for alert in sorted_alerts %}
           {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
           {% assign e_code_prefix = e_code | slice: 0, 2 %}
 
@@ -47,9 +48,17 @@
             {% if matches_this_line %}
               {% assign line_has_issue = true %}
 
+              {% assign begin_sec = alert.disruption_dates[0].begin_date | divided_by: 1000 %}
+              {% assign begin_formatted = begin_sec | date: "%b %d" %}
+
+              {% assign end_sec = alert.disruption_dates[0].end_date | divided_by: 1000 %}
+              {% assign end_formatted = end_sec | date: "%b %d" %}
+
               {% capture desc_html %}
       <div class="gap--small">
-        <span class="text--gray-25 text--justify">&bull;</span> <span data-clamp="1">{{ alert.publications[0].textEn }}</span>
+        <span class="label label--inverted label--small">{{ begin_formatted }} - {{ end_formatted }}</span> 
+        <span class="text--gray-25 text--justify">&bull;</span> 
+        <span data-clamp="1">{{ alert.publications[0].textEn }}</span>
       </div>
       {% endcapture %}
               {% assign combined_descriptions = combined_descriptions | append: desc_html %}
