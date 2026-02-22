@@ -1,4 +1,4 @@
-{% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}{% assign total_issues_count = 0 %}
+{% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}
 {% assign total_issues_count = 0 %}
 {% assign sorted_alerts = data.alerts | sort: "tstamp" | reverse %}
 
