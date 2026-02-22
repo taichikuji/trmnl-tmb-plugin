@@ -1,5 +1,6 @@
 {% assign lines_data = "L1:Hosp. Bellvitge / Fondo|L2:Paral·lel / Badalona PF|L3:Zona Univ. / Trinitat Nova|L4:La Pau / Trinitat Nova|L5:Cornellà / Vall d'Hebron|L9N:La Sagrera / Can Zam|L9S:Zona Univ. / Aeroport T1|L10N:La Sagrera / Gorg|L10S:ZAL Riu Vell / Collblanc|L11:Trinitat Nova / Can Cuiàs|FM:Paral·lel / Parc Montjuïc" | split: "|" %}
 {% assign total_issues_count = 0 %}
+{% assign sorted_alerts = data.alerts | sort: "tstamp" | reverse %}
 
 <div class="screen">
   <table class="table table--indexed" data-table-limit="true">
@@ -9,89 +10,97 @@
           <span class="title title--small"><img class="image image-dither h--6" src="https://raw.githubusercontent.com/taichikuji/trmnl-tmb-plugin/refs/heads/main/TRMNL/media/icon.svg" /></span>
         </th>
         <th class="w--auto">
-          <span class="title title--small">Status</span>
+          <span class="title title--small">Line & Status</span>
         </th>
       </tr>
     </thead>
     <tbody>
 
       {% for line_string in lines_data %}
-      {% assign line_parts = line_string | split: ":" %}
-      {% assign current_line_id = line_parts[0] %}
-      {% assign current_line_route = line_parts[1] %}
+        {% assign line_parts = line_string | split: ":" %}
+        {% assign current_line_id = line_parts[0] %}
+        {% assign current_line_route = line_parts[1] %}
 
-      {% assign line_has_issue = false %}
+        {% assign line_has_issue = false %}
+        {% assign combined_descriptions = "" %}
 
-      {% assign status_pairs_string = "" %}
+        {% comment %} Loop through sorted alerts {% endcomment %}
+        {% for alert in sorted_alerts %}
+          {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
+          {% assign e_code_prefix = e_code | slice: 0, 2 %}
 
-      {% for alert in data.alerts %}
-      {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
-      {% assign e_code_prefix = e_code | slice: 0, 2 %}
+          {% if e_code_prefix == 'PP' %}
 
-      {% if e_code_prefix == 'PP' %}
+            {% assign matches_this_line = false %}
+            {% for entity in alert.entities %}
+              {% if entity.line_name == current_line_id %}
+                {% assign matches_this_line = true %}
+              {% endif %}
+              {% if current_line_id == "FM" and entity.line_code == "99" %}
+                {% assign matches_this_line = true %}
+              {% endif %}
+            {% endfor %}
 
-      {% assign matches_this_line = false %}
-      {% for entity in alert.entities %}
-      {% if entity.line_name == current_line_id %}
-      {% assign matches_this_line = true %}
-      {% endif %}
-      {% if current_line_id == "FM" and entity.line_code == "99" %}
-      {% assign matches_this_line = true %}
-      {% endif %}
-      {% endfor %}
+            {% if matches_this_line %}
+            {% assign line_has_issue = true %}
 
-      {% if matches_this_line %}
-      {% assign line_has_issue = true %}
+              {% comment %} Variables for the consolidated string {% endcomment %}
+              {% assign begin_sec = alert.disruption_dates[0].begin_date | divided_by: 1000 %}
+              {% assign begin_formatted = begin_sec | date: "%b %d" %}
 
-      {% assign severity = alert.categories.effect_status %}
-      {% assign cause = alert.categories.cause_code %}
-      {% assign status_key = severity | append: "|" | append: cause %}
+              {% assign end_sec = alert.disruption_dates[0].end_date | divided_by: 1000 %}
+              {% assign end_formatted = end_sec | date: "%b %d" %}
 
-      {% unless status_pairs_string contains status_key %}
-      {% assign status_pairs_string = status_pairs_string | append: status_key | append: "," %}
-      {% endunless %}
+              {% assign severity = alert.categories.effect_status %}
+              {% assign cause = alert.categories.cause_code %}
 
-      {% endif %}
-      {% endif %}
-      {% endfor %}
+              {% capture desc_html %}
+      <div class="gap--small" style="margin-top: 6px; display: flex; align-items: center; flex-wrap: wrap;">
+        <span class="label label--inverted label--small">{{ begin_formatted }} - {{ end_formatted }}</span> 
+        <span class="label label--white label--small" style="margin-left: 4px;">{{ cause }}</span>
+        <span class="label label--inverted label--small" style="margin-left: 4px;">{{ severity }}</span>
+      </div>
+      {% endcapture %}
+              {% assign combined_descriptions = combined_descriptions | append: desc_html %}
 
-      {% if line_has_issue %}
-      {% assign total_issues_count = total_issues_count | plus: 1 %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
 
-      <tr>
-        <td>
-          <span class="meta w--10 rounded">
-            <span class="index text-stroke text-stroke--medium">{{ current_line_id }}</span>
-          </span>
-        </td>
-        <td>
-          {% assign unique_pairs = status_pairs_string | split: "," %}
-          {% for pair in unique_pairs %}
-          {% if pair == blank %}
-          {% continue %}{% endif %}
+        {% if line_has_issue %}
+          {% assign total_issues_count = total_issues_count | plus: 1 %}
 
-          {% assign parts = pair | split: "|" %}
-          {% assign s_severity = parts[0] %}
-          {% assign s_cause = parts[1] %}
+          <tr>
+            <td style="vertical-align: top; padding-top: 8px;">
+              <span class="meta w--10 rounded">
+                <span class="index text-stroke text-stroke--medium">{{ current_line_id }}</span>
+              </span>
+            </td>
+            <td style="padding-top: 8px; padding-bottom: 8px;">
 
-          <div style="margin-bottom: 2px;">
-            <span class="label label--white label--small">{{ s_cause }}</span>
-            <span class="label label--inverted label--small">{{ s_severity }}</span>
-          </div>
-          {% endfor %}
-        </td>
-      </tr>
-      {% endif %}
+              {% comment %} Route Name on top {% endcomment %}
+              <div>
+                <span class="label" data-clamp="1">{{ current_line_route }}</span>
+              </div>
+
+              {% comment %} Alerts underneath {% endcomment %}
+              <div class="description">
+                {{ combined_descriptions }}
+              </div>
+
+            </td>
+          </tr>
+        {% endif %}
 
       {% endfor %}
 
       {% if total_issues_count == 0 %}
-      <tr>
-        <td colspan="3" style="text-align: center; vertical-align: middle; height: 200px;">
-          <div class="title title--small" style="margin-top: 10px;">Servei Normal</div>
-          <div class="text--small text--gray">Totes les línies funcionen correctament.</div>
-        </td>
-      </tr>
+        <tr>
+          <td colspan="2" style="text-align: center; vertical-align: middle; height: 200px;">
+            <div class="title title--small" style="margin-top: 10px;">Servei Normal</div>
+            <div class="text--small text--gray">Totes les línies funcionen correctament.</div>
+          </td>
+        </tr>
       {% endif %}
 
     </tbody>

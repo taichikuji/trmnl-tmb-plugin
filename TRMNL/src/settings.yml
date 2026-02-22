@@ -9,8 +9,8 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB'
-polling_headers: 'app_id={{ userAppId }}&app_key={{ userAppKey }}'
+polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB?app_id={{ userAppId }}&app_key={{ userAppKey }}'
+polling_headers: ''
 polling_body: ''
 icon: media/icon.svg
 name: TMB Outages
