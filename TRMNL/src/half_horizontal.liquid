@@ -84,7 +84,7 @@
                 {% assign parts = pair | split: "|" %}
                 {% assign s_severity = parts[0] %}
                 {% assign s_cause = parts[1] %}
-                <div style="margin-bottom: 2px;">
+                <div class="mb--1">
                   <span class="label label--white label--small lg:label--base">{{ s_cause }}</span>
                   <span class="label label--inverted label--small lg:label--base">{{ s_severity }}</span>
                 </div>
@@ -96,7 +96,7 @@
 
       {% if total_issues_count == 0 %}
         <tr>
-          <td colspan="3" style="text-align: center; vertical-align: middle; height: 200px;">
+          <td colspan="3" class="text--center h--[200px]">
             {% render 'empty_state' %}
           </td>
         </tr>

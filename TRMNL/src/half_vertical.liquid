@@ -43,10 +43,10 @@
               {% assign cause = alert.categories.cause_code %}
 
               {% capture desc_html %}
-                <div class="gap--small" style="margin-top: 6px; display: flex; align-items: center; flex-wrap: wrap;">
+                <div class="flex flex--row flex--center-y gap--small mt--1 flex--wrap">
                   <span class="label label--inverted label--small lg:label--base">{{ begin_formatted }}-{{ end_formatted }}</span>
-                  <span class="label label--white label--small lg:label--base" style="margin-left: 4px;">{{ cause }}</span>
-                  <span class="label label--inverted label--small lg:label--base" style="margin-left: 4px;">{{ severity }}</span>
+                  <span class="label label--white label--small lg:label--base">{{ cause }}</span>
+                  <span class="label label--inverted label--small lg:label--base">{{ severity }}</span>
                 </div>
               {% endcapture %}
               {% assign combined_descriptions = combined_descriptions | append: desc_html %}
@@ -57,12 +57,12 @@
         {% if line_has_issue %}
           {% assign total_issues_count = total_issues_count | plus: 1 %}
           <tr>
-            <td style="vertical-align: top; padding-top: 8px;">
+            <td class="pt--2">
               <span class="meta w--10 lg:w--14 rounded">
                 <span class="index text-stroke text-stroke--medium lg:text--large">{{ current_line_id }}</span>
               </span>
             </td>
-            <td style="padding-top: 8px; padding-bottom: 8px;">
+            <td class="py--2">
               <div>
                 <span class="label lg:label--large" data-clamp="1">{{ current_line_route }}</span>
               </div>
@@ -76,7 +76,7 @@
 
       {% if total_issues_count == 0 %}
         <tr>
-          <td colspan="2" style="text-align: center; vertical-align: middle; height: 200px;">
+          <td colspan="2" class="text--center h--[200px]">
             {% render 'empty_state' %}
           </td>
         </tr>
