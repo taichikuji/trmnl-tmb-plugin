@@ -9,8 +9,6 @@ watch:
 # This is the "proper" place.
 # It works as {{resource_type}} in settings.yml
 # AND maps to trmnl.plugin_settings.custom_fields_values.resource_type in Liquid.
-custom_fields:
-  resource_type: "Electricity"
 
 # override variables for development
 variables:
