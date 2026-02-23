@@ -1,16 +1,14 @@
 {% assign total_issues_count = 0 %}
 
-<div class="screen">
+<div class="layout layout--col">
   <table class="table table--indexed lg:table--base" data-table-limit="true">
     <thead>
       <tr>
         <th class="w--auto w--min-16 lg:w--min-24">
-          <span class="title title--small lg:title--medium">
-            <img class="image image-dither h--10 lg:h--14" src="{{ icon_url }}" />
-          </span>
+          <span class="title title--small lg:title--medium">Line</span>
         </th>
         <th class="w--auto">
-          <span class="title title--small lg:title--medium">Line</span>
+          <span class="title title--small lg:title--medium">Destination</span>
         </th>
         <th class="w--auto w--min-32 lg:w--min-48">
           <span class="title title--small lg:title--medium">Status</span>
@@ -85,8 +83,8 @@
                 {% assign s_severity = parts[0] %}
                 {% assign s_cause = parts[1] %}
                 <div class="mb--1">
-                  <span class="label label--white label--small lg:label--base">{{ s_cause }}</span>
-                  <br/><span class="label label--inverted label--small lg:label--base">{{ s_severity }}</span>
+                  <span class="label label--white 4bit:label--outline label--small lg:label--base">{{ s_cause }}</span>
+                  <br/><span class="label label--inverted 4bit:label--underline label--small lg:label--base">{{ s_severity }}</span>
                 </div>
               {% endfor %}
             </td>
@@ -105,4 +103,6 @@
   </table>
 </div>
 
-{% render 'title_bar' %}
+{% render 'title_bar'
+  , title: trmnl.plugin_settings.instance_name
+  , svg_logo: svg_logo %}

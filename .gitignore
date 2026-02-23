@@ -210,3 +210,5 @@ __marimo__/
 node_modules/
 # trmnlp
 bin/trmnlp
+# svg extension files
+settings.json

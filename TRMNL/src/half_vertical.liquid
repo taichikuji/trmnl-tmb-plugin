@@ -1,16 +1,14 @@
 {% assign total_issues_count = 0 %}
 
-<div class="screen">
+<div class="layout layout--col">
   <table class="table table--indexed lg:table--base" data-table-limit="true">
     <thead>
       <tr>
         <th class="w--12 lg:w--20">
-          <span class="title title--small lg:title--medium">
-            <img class="image image-dither h--6 lg:h--10" src="{{ icon_url }}" />
-          </span>
+          <span class="title title--small lg:title--medium">Line</span>
         </th>
         <th class="w--auto">
-          <span class="title title--small lg:title--medium">Line & Status</span>
+          <span class="title title--small lg:title--medium">Destination & Status</span>
         </th>
       </tr>
     </thead>
@@ -45,8 +43,8 @@
               {% capture desc_html %}
                 <div class="flex flex--row flex--center-y gap--small mt--1 flex--wrap">
                   <span class="label label--inverted label--small lg:label--base">{{ begin_formatted }}-{{ end_formatted }}</span>
-                  <span class="label label--white label--small lg:label--base">{{ cause }}</span>
-                  <span class="label label--inverted label--small lg:label--base">{{ severity }}</span>
+                  <span class="label label--white 4bit:label--outline label--small lg:label--base">{{ cause }}</span>
+                  <span class="label label--inverted 4bit:label--underline label--small lg:label--base">{{ severity }}</span>
                 </div>
               {% endcapture %}
               {% assign combined_descriptions = combined_descriptions | append: desc_html %}
@@ -85,4 +83,6 @@
   </table>
 </div>
 
-{% render 'title_bar' %}
+{% render 'title_bar'
+  , title: trmnl.plugin_settings.instance_name
+  , svg_logo: svg_logo %}

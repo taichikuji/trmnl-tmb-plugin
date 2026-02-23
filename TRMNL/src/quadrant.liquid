@@ -39,7 +39,7 @@
     {% endfor %}
 
     <div class="layout__item text--center">
-      <img class="image image-dither h--10 lg:h--16" src="{{ icon_url }}" />
+      <img class="image image-dither h--10 lg:h--16" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
       <div class="title title--large lg:title--xlarge portrait:title--small">{{ line_id }}</div>
       <div class="label lg:label--large">{{ line_name }}</div>
       <div class="gap--small lg:gap--medium"></div>
@@ -62,4 +62,6 @@
   {% endif %}
 </div>
 
-{% render 'title_bar' %}
+{% render 'title_bar'
+  , title: trmnl.plugin_settings.instance_name
+  , svg_logo: svg_logo %}
