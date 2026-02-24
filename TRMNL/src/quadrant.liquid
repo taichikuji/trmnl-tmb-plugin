@@ -16,6 +16,7 @@
     {% assign severity = target_alert.categories.effect_status %}
     {% assign cause = target_alert.categories.cause_code %}
     {% assign description = target_alert.publications[0].textEn %}
+    {% assign header = target_alert.publications[0].textEn %}
 
     {% assign line_id = nil %}
     {% for entity in target_alert.entities %}
@@ -42,16 +43,14 @@
       <img class="image image-dither h--10 lg:h--16" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
       <div class="title title--large lg:title--xlarge portrait:title--small">{{ line_id }}</div>
       <div class="label lg:label--large">{{ line_name }}</div>
-      <div class="gap--small lg:gap--medium"></div>
       <div>
         <span class="label label--inverted lg:label--xlarge">{{ severity }}</span>
         <span class="label label--white lg:label--xlarge">{{ cause }}</span>
       </div>
-      <div class="gap--small lg:gap--medium"></div>
       <div
-        class="text--small lg:text--base description"
-        data-clamp="4"
-        data-clamp-lg="6">
+        class="description lg:description--large"
+        data-clamp="3"
+        data-clamp-lg="4">
         {{ description }}
       </div>
     </div>
