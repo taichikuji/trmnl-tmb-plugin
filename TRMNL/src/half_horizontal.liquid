@@ -1,17 +1,17 @@
 {% assign total_issues_count = 0 %}
 
-<div class="layout layout--col">
+<div class="layout layout--col layout--top">
   <table class="table table--indexed lg:table--base" data-table-limit="true">
     <thead>
       <tr>
         <th class="w--auto w--min-16 lg:w--min-24">
-          <span class="title title--small lg:title--medium">Line</span>
+          <span class="title title--small lg:title--large">Line</span>
         </th>
         <th class="w--auto">
-          <span class="title title--small lg:title--medium">Destination</span>
+          <span class="title title--small lg:title--large">Destination</span>
         </th>
         <th class="w--auto w--min-32 lg:w--min-48">
-          <span class="title title--small lg:title--medium">Status</span>
+          <span class="title title--small lg:title--large">Status</span>
         </th>
       </tr>
     </thead>
@@ -43,11 +43,11 @@
               {% assign end_formatted = end_sec | date: "%d/%m" %}
 
               {% capture desc_html %}
-                <div class="gap--small">
-                  <span class="text--gray-25 text--justify">&bull;</span>
-                  <span data-clamp="1" data-clamp-lg="2">{{ alert.publications[0].textEn }}</span>
-                </div>
-              {% endcapture %}
+      <div class="gap--small">
+        <span class="text--gray-25 text--justify">&bull;</span>
+        <span data-clamp="1" data-clamp-lg="2">{{ alert.publications[0].textEn }}</span>
+      </div>
+      {% endcapture %}
               {% assign combined_descriptions = combined_descriptions | append: desc_html %}
 
               {% assign severity = alert.categories.effect_status %}
@@ -94,7 +94,7 @@
 
       {% if total_issues_count == 0 %}
         <tr>
-          <td colspan="3" class="text--center h--[200px]">
+          <td colspan="3" class="text--center h--[200px] vertical-align--middle">
             {% render 'empty_state' %}
           </td>
         </tr>
@@ -104,5 +104,5 @@
 </div>
 
 {% render 'title_bar'
-  , title: trmnl.plugin_settings.instance_name
+  , title: trmnl.plugin_settings.instance_name 
   , svg_logo: svg_logo %}
