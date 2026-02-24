@@ -11,12 +11,12 @@
   {% endif %}
 {% endfor %}
 
-<div class="layout layout--col layout--center-center">
+<div class="layout layout--col layout--center-center gap--medium lg:gap--large">
   {% if target_alert %}
     {% assign severity = target_alert.categories.effect_status %}
     {% assign cause = target_alert.categories.cause_code %}
     {% assign description = target_alert.publications[0].textEn %}
-    {% assign header = target_alert.publications[0].textEn %}
+    {% assign header = target_alert.publications[0].headerEn %}
 
     {% assign line_id = nil %}
     {% for entity in target_alert.entities %}
@@ -40,17 +40,17 @@
     {% endfor %}
 
     <div class="layout__item text--center">
-      <img class="image image-dither h--10 lg:h--16" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
+      <img class="image image-dither h--10 lg:h--20" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
       <div class="title title--large lg:title--xlarge portrait:title--small">{{ line_id }}</div>
       <div class="label lg:label--large">{{ line_name }}</div>
       <div>
-        <span class="label label--inverted lg:label--xlarge">{{ severity }}</span>
-        <span class="label label--white lg:label--xlarge">{{ cause }}</span>
+        <span class="label label--inverted lg:label--xlarge">{{ header }}</span>
       </div>
+      <div class="lg:h--5"></div>
       <div
         class="description lg:description--large"
-        data-clamp="3"
-        data-clamp-lg="4">
+        data-clamp="4"
+        data-clamp-lg="5">
         {{ description }}
       </div>
     </div>
