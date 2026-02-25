@@ -21,6 +21,12 @@
       height="28"
       alt="TMB svg logo" />
     <span class="title">{{ title | default: 'TMB' }}</span>
-    <span class="instance">Line Status and Outages</span>
+    <span class="instance">
+      {% if alert_count and alert_count > 0 %}
+        {{ alert_count }} Active Alerts
+      {% else %}
+        Line Status and Outages
+      {% endif %}
+    </span>
   </div>
 {% endtemplate %}

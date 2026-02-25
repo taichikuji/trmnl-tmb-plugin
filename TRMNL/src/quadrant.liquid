@@ -62,5 +62,7 @@
 </div>
 
 {% render 'title_bar'
-  , title: trmnl.plugin_settings.instance_name
-  , svg_logo: svg_logo %}
+  , svg_logo: svg_logo 
+  , title: trmnl.plugin_settings.instance_name 
+  , alert_count: sorted_alerts.size
+%}
