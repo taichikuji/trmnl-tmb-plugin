@@ -1,11 +1,10 @@
 {% assign target_alert = nil %}
 
-{% comment %} Find the most severe (PP) alert {% endcomment %}
 {% for alert in sorted_alerts %}
   {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
   {% assign e_code_prefix = e_code | slice: 0, 2 %}
 
-  {% if e_code_prefix == 'PP' %}
+  {% if e_code_prefix == 'PP' or e_code_prefix == 'NP' %}
     {% assign target_alert = alert %}
     {% break %}
   {% endif %}
