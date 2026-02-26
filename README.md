@@ -1,7 +1,7 @@
 # trmnl-tmb-plugin
 A TRMNL TMB plugin to display Metro service status in Barcelona. This README is focused on the development and improvements of the project.
 
-Installation button not yet available! Will be published (hopefully) soon!
+Install it [here](https://trmnl.com/recipes/247650)!
 
 ## Requirements
 
