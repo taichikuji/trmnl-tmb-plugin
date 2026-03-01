@@ -31,4 +31,5 @@ custom_fields:
   name: About This Plugin
   description: "Created by Ivan Perez. This plugin is for monitoring real-time metro outages in Barcelona on your TRMNL device."
   category: "news,travel"
+  learn_more_url: "https://discordid.taichikuji.org/discord"
   github_url: "https://github.com/taichikuji/trmnl-tmb-plugin"
