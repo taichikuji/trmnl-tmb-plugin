@@ -43,9 +43,9 @@
               {% assign end_formatted = end_sec | date: "%d/%m" %}
 
               {% capture desc_html %}
-      <div class="gap--small">
+      <div class="gap--small" data-clamp="1" data-clamp-lg="2">
         <span class="text--gray-25 text--justify">&bull;</span>
-        <span data-clamp="1" data-clamp-lg="2">{{ alert.publications[0].textEn }}</span>
+        <span>{{ alert.publications[0].textEn }}</span>
       </div>
       {% endcapture %}
               {% assign combined_descriptions = combined_descriptions | append: desc_html %}
