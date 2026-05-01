@@ -1,0 +1,31 @@
+name: Publish to TRMNL
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "TRMNL/src/**"
+      - "TRMNL/media/**"
+
+jobs:
+  publish:
+    name: Push plugin to TRMNL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # TRMNL_PLUGIN_SETTING_ID: integer from the plugin edit URL on trmnl.com: /plugin_settings/<ID>/edit
+      # See also: TRMNL/.trmnlp.yml
+
+      - name: Push plugin via trmnlp
+        working-directory: TRMNL
+        env:
+          TRMNL_API_KEY: ${{ secrets.TRMNL_API_KEY }}
+        run: |
+          docker run --rm \
+            --volume "$(pwd):/plugin" \
+            --env TRMNL_API_KEY \
+            trmnl/trmnlp push --force --id "${{ secrets.TRMNL_PLUGIN_SETTING_ID }}"
