@@ -26,6 +26,16 @@ custom_fields:
   name: App Key
   description: Your app_key from the TMB developer portal.
   help_text: Retrieve your app_id and app_key from the dashboard after signing up.
+- keyname: userLanguage
+  field_type: select
+  name: Language
+  description: Display language for alert text and labels.
+  help_text: The TMB API publishes alerts in Catalan, Spanish and English.
+  options:
+  - English
+  - Spanish
+  - Catalan
+  default: English
 - keyname: author_bio
   field_type: author_bio
   name: About This Plugin

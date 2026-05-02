@@ -12,10 +12,8 @@
 
 <div class="layout layout--col layout--center-center gap--medium lg:gap--large">
   {% if target_alert %}
-    {% assign severity = target_alert.categories.effect_status %}
-    {% assign cause = target_alert.categories.cause_code %}
-    {% assign description = target_alert.publications[0].textEn %}
-    {% assign header = target_alert.publications[0].headerEn %}
+    {% assign description = target_alert.publications[0][text_key] %}
+    {% assign header = target_alert.publications[0][header_key] %}
 
     {% assign line_id = nil %}
     {% for entity in target_alert.entities %}
@@ -55,7 +53,10 @@
     </div>
   {% else %}
     <div class="layout__item text--center">
-      {% render 'empty_state' %}
+      {% render 'empty_state'
+        , t_all_good: t_all_good
+        , t_all_good_subtitle: t_all_good_subtitle
+      %}
     </div>
   {% endif %}
 </div>
@@ -63,5 +64,7 @@
 {% render 'title_bar'
   , svg_logo: svg_logo 
   , title: trmnl.plugin_settings.instance_name 
-  , alert_count: sorted_alerts.size
+  , alert_count: active_alert_count
+  , t_active_alerts: t_active_alerts
+  , t_line_status: t_line_status
 %}
