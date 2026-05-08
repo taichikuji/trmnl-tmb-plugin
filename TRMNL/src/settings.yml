@@ -13,7 +13,7 @@ polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB?app_id={{ userApp
 polling_headers: ''
 polling_body: ''
 icon: media/icon.svg
-name: TMB Outages
+name: TMB Alerts
 refresh_interval: 30
 custom_fields:
 - keyname: userAppId
