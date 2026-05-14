@@ -30,7 +30,7 @@ custom_fields:
   field_type: select
   name: Language
   description: Display language for alert text and labels.
-  help_text: The TMB API publishes alerts in Catalan, Spanish and English.
+  help_text: TMB publishes alerts in Catalan, Spanish and English.
   options:
   - English
   - Spanish
