@@ -1,70 +1,30 @@
-{% assign target_alert = nil %}
-
-{% for alert in sorted_alerts %}
-  {% assign e_code = alert.categories.effect_code | default: alert.effect.code %}
-  {% assign e_code_prefix = e_code | slice: 0, 2 %}
-
-  {% if e_code_prefix == 'PP' or e_code_prefix == 'NP' %}
-    {% assign target_alert = alert %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-
-<div class="layout layout--col layout--center-center gap--medium lg:gap--large">
-  {% if target_alert %}
-    {% assign description = target_alert.publications[0][text_key] %}
-    {% assign header = target_alert.publications[0][header_key] %}
-
-    {% assign line_id = nil %}
-    {% for entity in target_alert.entities %}
-      {% if entity.line_name %}
-        {% assign line_id = entity.line_name %}
-      {% elsif entity.line_code == "99" %}
-        {% assign line_id = "FM" %}
-      {% endif %}
-      {% if line_id %}
-        {% break %}
-      {% endif %}
-    {% endfor %}
-
-    {% assign line_name = line_id %}
-    {% for line_string in lines_data %}
-      {% assign parts = line_string | split: ":" %}
-      {% if parts[0] == line_id %}
-        {% assign line_name = parts[1] %}
-        {% break %}
-      {% endif %}
-    {% endfor %}
-
-    <div class="layout__item text--center">
-      <img class="image image-dither h--10 lg:h--20" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
-      <div class="title title--large lg:title--xlarge portrait:title--small">{{ line_id }}</div>
-      <div class="label lg:label--large">{{ line_name }}</div>
-      <div>
-        <span class="label label--filled lg:label--xlarge">{{ header }}</span>
-      </div>
-      <div class="lg:h--5"></div>
-      <div
-        class="description lg:description--large"
-        data-clamp="4"
-        data-clamp-lg="5">
-        {{ description }}
-      </div>
+<div class="layout layout--col layout--top tmb-board tmb-board--quadrant">
+  <div class="tmb-heading border--h-50 pb--2">
+    <span class="title lg:title--large" data-clamp="1">{{ words[0] }}</span>
+    {% if data_available %}<span class="label label--small lg:label--base">{{ notice_count }} {% if notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>{% endif %}
+  </div>
+  {% if data_available == false or notice_count == 0 %}
+    <div class="tmb-state">
+      <div class="tmb-state-symbol">{% if data_available %}✓{% else %}!{% endif %}</div>
+      <span class="title lg:title--xlarge" data-clamp="2">{% if data_available %}{{ words[5] }}{% else %}{{ words[7] }}{% endif %}</span>
+      <div class="description lg:description--large" data-clamp="3">{% if data_available %}{{ words[6] }}{% else %}{{ words[8] }}{% endif %}</div>
     </div>
   {% else %}
-    <div class="layout__item text--center">
-      {% render 'empty_state'
-        , t_all_good: t_all_good
-        , t_all_good_subtitle: t_all_good_subtitle
-      %}
+    {% assign cards_shown = 0 %}
+    <div class="tmb-card-grid">
+      {% for line_id in priority_affected_line_ids %}
+        {% if line_id != blank %}
+          {% if cards_shown >= 2 %}{% break %}{% endif %}
+          {% assign cards_shown = cards_shown | plus: 1 %}
+          {% render 'line_card', line_id: line_id, sorted_alerts: sorted_alerts, ordered_indices: ordered_indices, lines_data: lines_data, words: words %}
+        {% endif %}
+      {% endfor %}
     </div>
+    {% if affected_count > cards_shown %}<span class="label label--small lg:label--base tmb-more">+{{ affected_count | minus: cards_shown }} {{ words[16] }}</span>{% endif %}
   {% endif %}
 </div>
-
-{% render 'title_bar'
-  , svg_logo: svg_logo 
-  , title: trmnl.plugin_settings.instance_name 
-  , alert_count: active_alert_count
-  , t_active_alerts: t_active_alerts
-  , t_line_status: t_line_status
-%}
+<div class="title_bar">
+  <img class="image image--adaptive" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" width="28" height="28" alt="TMB" />
+  <span class="title">{{ trmnl.plugin_settings.instance_name | default: 'TMB Alerts' | escape }}</span>
+  <span class="instance">TMB</span>
+</div>
