@@ -69,6 +69,11 @@
   {% unless line_id == blank or ordered_affected_ids contains token %}{% assign ordered_affected_ids = ordered_affected_ids | append: line_id | append: '|' %}{% endunless %}
 {% endfor %}
 {% assign affected_line_ids = ordered_affected_ids | split: '|' %}
+{%- capture affected_summary -%}
+  {%- if data_available -%}
+    {{- affected_count }} {% if affected_count == 1 %}{{ words[3] }}{% else %}{{ words[4] }}{% endif -%}
+  {%- endif -%}
+{%- endcapture -%}
 {% assign priority_affected_ids = '|' %}
 {% for index_string in ordered_indices %}
   {% assign alert_index = index_string | plus: 0 %}

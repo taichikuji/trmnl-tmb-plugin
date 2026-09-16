@@ -69,6 +69,18 @@ test('full view groups repeated notices into one TMB-style line card', async () 
   assert.match(html, /Zona Universitària \/ Trinitat Nova/);
 });
 
+test('affected-line summary moves to the title bar', async () => {
+  for (const mode of modes) {
+    const html = await render(mode, fixtures.website, 'Spanish');
+    assert.match(html, /<span class="instance">6 líneas afectadas<\/span>/);
+    assert.doesNotMatch(html, /<span class="instance">TMB<\/span>/);
+  }
+  const full = await render('full', fixtures.website, 'Spanish');
+  assert.doesNotMatch(full, /VIGENTE<\/span>\s*<span class="label label--small lg:label--base">6 líneas afectadas/);
+  const vertical = await render('half_vertical', fixtures.website, 'Spanish');
+  assert.doesNotMatch(vertical, /tmb-summary/);
+});
+
 test('full view always renders every affected line in a fixed two-column grid', async () => {
   const website = await render('full', fixtures.website);
   const crowded = await render('full', fixtures.crowded);
