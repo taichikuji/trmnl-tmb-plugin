@@ -13,7 +13,7 @@ polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB?app_id={{ userApp
 polling_headers: ''
 polling_body: ''
 icon: media/icon.svg
-name: TMB Alerts
+name: TMB Metro Alerts
 refresh_interval: 30
 custom_fields:
 - keyname: userAppId
