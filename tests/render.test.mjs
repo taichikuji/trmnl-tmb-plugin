@@ -1,36 +1,35 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { expect, test } from 'bun:test';
 import { render } from './render.mjs';
 import { alert, fixtures } from './fixtures.mjs';
 const modes = ['full','half_horizontal','half_vertical','quadrant'];
 for (const mode of modes) {
   test(`${mode}: counts and TMB line cards agree`, async () => {
     const html = await render(mode, fixtures.normal);
-    assert.match(html, /4 notices/);
-    if (mode !== 'quadrant') assert.match(html, /Hospital de Bellvitge \/ Fondo/);
-    assert.equal((html.match(/class="item tmb-line-card"/g) || []).length, { full: 5, half_horizontal: 4, half_vertical: 5, quadrant: 2 }[mode]);
-    assert.match(html, /Severe/);
-    if (mode === 'full') assert.match(html, /data-url="https:\/\/www\.tmb\.cat\/es\/transporte-barcelona\/estado-red-metro"/);
-    else assert.doesNotMatch(html, /class="qr-code"/);
+    expect(html).toMatch(/4 notices/);
+    if (mode !== 'quadrant') expect(html).toMatch(/Hospital de Bellvitge \/ Fondo/);
+    expect((html.match(/class="item tmb-line-card"/g) || []).length).toBe({ full: 5, half_horizontal: 4, half_vertical: 5, quadrant: 2 }[mode]);
+    expect(html).toMatch(/Severe/);
+    if (mode === 'full') expect(html).toMatch(/data-url="https:\/\/www\.tmb\.cat\/es\/transporte-barcelona\/estado-red-metro"/);
+    else expect(html).not.toMatch(/class="qr-code"/);
     if (mode === 'quadrant') {
-      assert.match(html, /data-line-id="L4"/);
-      assert.match(html, /data-line-id="L5"/);
-      assert.match(html, /\+3 more/);
+      expect(html).toMatch(/data-line-id="L4"/);
+      expect(html).toMatch(/data-line-id="L5"/);
+      expect(html).toMatch(/\+3 more/);
     }
   });
   test(`${mode}: missing data is distinct from zero notices`, async () => {
-    assert.match(await render(mode, fixtures.empty), /No service notices/);
+    expect(await render(mode, fixtures.empty)).toMatch(/No service notices/);
     const html = await render(mode, fixtures.missing);
-    assert.match(html, /Data unavailable/);
-    assert.doesNotMatch(html, /No service notices/);
+    expect(html).toMatch(/Data unavailable/);
+    expect(html).not.toMatch(/No service notices/);
   });
   for (const language of ['English','Spanish','Catalan']) {
     for (const [state, data] of Object.entries(fixtures)) {
       test(`${mode}: ${language} ${state} renders`, async () => {
         const html = await render(mode, data, language);
-        assert.doesNotMatch(html, /Liquid error|undefined|NaN/);
-        assert.equal((html.match(/class="layout /g) || []).length, 1);
-        assert.equal((html.match(/class="title_bar"/g) || []).length, 1);
+        expect(html).not.toMatch(/Liquid error|undefined|NaN/);
+        expect((html.match(/class="layout /g) || []).length).toBe(1);
+        expect((html.match(/class="title_bar"/g) || []).length).toBe(1);
       });
     }
   }
@@ -38,8 +37,8 @@ for (const mode of modes) {
 
 test('half vertical uses the available space for six affected lines', async () => {
   const html = await render('half_vertical', fixtures.website, 'Spanish');
-  assert.equal((html.match(/class="item tmb-line-card"/g) || []).length, 6);
-  assert.doesNotMatch(html, /class="label label--small lg:label--base tmb-more"/);
+  expect((html.match(/class="item tmb-line-card"/g) || []).length).toBe(6);
+  expect(html).not.toMatch(/class="label label--small lg:label--base tmb-more"/);
 });
 test('fallback effect codes, FM codes and unknown statuses remain visible', async () => {
   const example = alert({ status: 'NEW_STATUS' });
@@ -47,16 +46,16 @@ test('fallback effect codes, FM codes and unknown statuses remain visible', asyn
   example.effect = { code: 'NP_TEST' };
   example.entities = [{ line_code: 99 }, { line_code: '99' }];
   const html = await render('half_vertical', { alerts: [example, alert({ code: 'IGNORED' })] });
-  assert.match(html, /1 notice/);
-  assert.match(html, /1 affected line/);
-  assert.match(html, /Paral·lel \/ Parc de Montjuïc/);
-  assert.match(html, /NEW_STATUS/);
-  assert.equal((html.match(/data-line-id="FM"/g) || []).length, 1);
+  expect(html).toMatch(/1 notice/);
+  expect(html).toMatch(/1 affected line/);
+  expect(html).toMatch(/Paral·lel \/ Parc de Montjuïc/);
+  expect(html).toMatch(/NEW_STATUS/);
+  expect((html.match(/data-line-id="FM"/g) || []).length).toBe(1);
 });
 test('external line IDs and instance names are escaped', async () => {
   const html = await render('full', { alerts: [alert({ lines: ['<script>bad()</script>'] })] }, 'English', '<img src=x>');
-  assert.doesNotMatch(html, /<script>bad|<img src=x>/);
-  assert.match(html, /&lt;script&gt;bad\(\)&lt;\/script&gt;/);
+  expect(html).not.toMatch(/<script>bad|<img src=x>/);
+  expect(html).toMatch(/&lt;script&gt;bad\(\)&lt;\/script&gt;/);
 });
 
 test('full view groups repeated notices into one TMB-style line card', async () => {
@@ -64,34 +63,34 @@ test('full view groups repeated notices into one TMB-style line card', async () 
     alert({ id: 2, lines: ['L3'], headline: 'First L3 notice' }),
     alert({ id: 1, lines: ['L3'], headline: 'Second L3 notice' })
   ] });
-  assert.match(html, /2 notices/);
-  assert.equal((html.match(/data-line-id="L3"/g) || []).length, 1);
-  assert.match(html, /Zona Universitària \/ Trinitat Nova/);
+  expect(html).toMatch(/2 notices/);
+  expect((html.match(/data-line-id="L3"/g) || []).length).toBe(1);
+  expect(html).toMatch(/Zona Universitària \/ Trinitat Nova/);
 });
 
 test('affected-line summary moves to the title bar', async () => {
   for (const mode of modes) {
     const html = await render(mode, fixtures.website, 'Spanish');
-    assert.match(html, /<span class="instance">6 líneas afectadas<\/span>/);
-    assert.doesNotMatch(html, /<span class="instance">TMB<\/span>/);
+    expect(html).toMatch(/<span class="instance">6 líneas afectadas<\/span>/);
+    expect(html).not.toMatch(/<span class="instance">TMB<\/span>/);
   }
   const full = await render('full', fixtures.website, 'Spanish');
-  assert.doesNotMatch(full, /VIGENTE<\/span>\s*<span class="label label--small lg:label--base">6 líneas afectadas/);
+  expect(full).not.toMatch(/VIGENTE<\/span>\s*<span class="label label--small lg:label--base">6 líneas afectadas/);
   const vertical = await render('half_vertical', fixtures.website, 'Spanish');
-  assert.doesNotMatch(vertical, /tmb-summary/);
+  expect(vertical).not.toMatch(/tmb-summary/);
 });
 
 test('full view always renders every affected line in a fixed two-column grid', async () => {
   const website = await render('full', fixtures.website);
   const crowded = await render('full', fixtures.crowded);
-  assert.equal((website.match(/class="item tmb-line-card"/g) || []).length, 6);
-  assert.equal((crowded.match(/class="item tmb-line-card"/g) || []).length, 11);
-  assert.match(website, /class="tmb-card-grid [^"]*grid grid--cols-2/);
-  assert.doesNotMatch(website, /class="columns tmb-list"/);
+  expect((website.match(/class="item tmb-line-card"/g) || []).length).toBe(6);
+  expect((crowded.match(/class="item tmb-line-card"/g) || []).length).toBe(11);
+  expect(website).toMatch(/class="tmb-card-grid [^"]*grid grid--cols-2/);
+  expect(website).not.toMatch(/class="columns tmb-list"/);
 });
 
 test('non-array responses are unavailable rather than all clear', async () => {
   for (const alerts of [null, false, 'unavailable', {}, 0]) {
-    assert.match(await render('full', { alerts }), /Data unavailable/);
+    expect(await render('full', { alerts })).toMatch(/Data unavailable/);
   }
 });

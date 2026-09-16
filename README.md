@@ -16,7 +16,7 @@ Install it [here](https://trmnl.com/recipes/247650)!
 
 ## Local development
 
-Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), add local values for the three custom fields, then preview all four layouts. Run the rendering checks with `pnpm test`.
+Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), add local values for the three custom fields, then preview all four layouts. Run the rendering checks with `bun test`.
 
 ## References
 
