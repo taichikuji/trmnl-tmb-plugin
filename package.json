@@ -1,7 +1,0 @@
-{
-  "name": "trmnl-tmb-plugin-checks",
-  "private": true,
-  "type": "module",
-  "scripts": { "test": "bun test ./tests/render.test.mjs" },
-  "devDependencies": { "liquidjs": "10.29.0" }
-}
