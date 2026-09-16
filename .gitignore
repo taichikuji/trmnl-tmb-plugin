@@ -212,3 +212,4 @@ node_modules/
 bin/trmnlp
 # svg extension files
 settings.json
+.agents

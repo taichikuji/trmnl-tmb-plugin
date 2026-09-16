@@ -106,7 +106,7 @@
   .tmb-board .tmb-line-badge { min-width: 38px; padding: 7px 5px; text-align: center; font-weight: bold; }
   .tmb-board .tmb-line-route { display: block; margin-bottom: 5px; font-weight: bold; }
   .tmb-board .tmb-line-status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 9px; }
-  .tmb-board .tmb-alert-symbol { font-weight: bold; }
+  .tmb-board .tmb-alert-symbol { width: 1.25em; height: 1.25em; vertical-align: -0.25em; }
   .tmb-board .tmb-source { width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: auto; text-align: right; }
   .tmb-board .tmb-source .qr-code { display: block; box-sizing: content-box; width: 99px; height: 99px; padding: 8px; background: white; }
   .tmb-board .tmb-state { margin: auto; width: 100%; text-align: center; }
@@ -140,6 +140,9 @@
   .screen--1bit:not([class*="screen--color-"]) .tmb-tab,
   .screen--2bit:not([class*="screen--color-"]) .tmb-tab,
   .screen--4bit:not([class*="screen--color-"]) .tmb-tab { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
+  .screen--1bit:not([class*="screen--color-"]) .tmb-alert-symbol,
+  .screen--2bit:not([class*="screen--color-"]) .tmb-alert-symbol,
+  .screen--4bit:not([class*="screen--color-"]) .tmb-alert-symbol { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
   .screen--color-4bwry .tmb-line-badge.bg--green { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
   .screen--lg .tmb-board .tmb-state-symbol { width: 72px; height: 72px; font-size: 44px; }
   /* Keep short mashup slots useful even in portrait. */
@@ -193,7 +196,7 @@
     <div class="content tmb-content">
       <span class="title title--small lg:title--base tmb-line-route" data-clamp="1">{{ route | escape }}</span>
       <div class="tmb-line-status">
-        <span class="label label--small lg:label--base"><span class="tmb-alert-symbol {% if line_status == 'SEVERE' %}text--red{% else %}text--orange{% endif %}">△</span> {{ line_status_label | escape }}</span>
+        <span class="label label--small lg:label--base"><svg class="tmb-alert-symbol {% if line_status == 'SEVERE' %}text--red{% else %}text--orange{% endif %}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M1.958 17.563c-.278 0-.486-.119-.625-.355s-.139-.472 0-.708L9.374 2.604c.153-.236.361-.354.625-.354s.473.118.625.354L18.666 16.5c.139.236.139.472 0 .708s-.347.355-.625.355H1.958Zm8.125-9.438a.609.609 0 0 0-.448.177.609.609 0 0 0-.177.448v3.375c0 .181.059.33.177.448a.609.609 0 0 0 .448.177c.18 0 .329-.059.448-.177a.609.609 0 0 0 .177-.448V8.75a.609.609 0 0 0-.177-.448.609.609 0 0 0-.448-.177Zm0 6.938a.62.62 0 0 0 .458-.198.647.647 0 0 0 .188-.469.596.596 0 0 0-.188-.448.642.642 0 0 0-.458-.177.626.626 0 0 0-.458.187.626.626 0 0 0-.188.459c0 .18.063.333.188.458s.278.188.458.188Zm-6.979 1.125h13.791L9.999 4.271 3.104 16.188Z"/></svg> {{ line_status_label | escape }}</span>
         <span class="label label--small lg:label--base">{{ line_notice_count }} {% if line_notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>
         {% if line_cause_label != blank %}<span class="label label--small lg:label--base tmb-line-cause">{{ line_cause_label | escape }}</span>{% endif %}
       </div>
