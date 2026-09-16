@@ -1,17 +1,17 @@
-<div class="layout layout--col layout--top tmb-board tmb-board--half_horizontal">
-  <div class="tmb-heading border--h-50 pb--2">
-    <span class="title lg:title--large" data-clamp="1">{{ words[0] }}</span>
+<div class="layout layout--col layout--top gap--[6px] lg:gap--medium tmb-board tmb-board--half_horizontal">
+  <div class="tmb-heading w--full flex flex--row flex--between flex--nowrap gap--small border--h-50 pb--2">
+    <span class="title lg:title--large text--bold w--min-0" data-clamp="1">{{ words[0] }}</span>
     {% if data_available %}<span class="label label--small lg:label--base">{{ notice_count }} {% if notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>{% endif %}
   </div>
   {% if data_available == false or notice_count == 0 %}
-    <div class="tmb-state">
-      <div class="tmb-state-symbol">{% if data_available %}✓{% else %}!{% endif %}</div>
+    <div class="tmb-state w--full text--center">
+      <div class="tmb-state-symbol flex flex--row flex--center-x flex--center-y text--bold">{% if data_available %}✓{% else %}!{% endif %}</div>
       <span class="title lg:title--xlarge" data-clamp="2">{% if data_available %}{{ words[5] }}{% else %}{{ words[7] }}{% endif %}</span>
       <div class="description lg:description--large" data-clamp="3">{% if data_available %}{{ words[6] }}{% else %}{{ words[8] }}{% endif %}</div>
     </div>
   {% else %}
     {% assign cards_shown = 0 %}
-    <div class="tmb-card-grid">
+    <div class="tmb-card-grid w--full h--min-0 grid grid--cols-2 gap--xsmall lg:gap--medium">
       {% for line_id in priority_affected_line_ids %}
         {% if line_id != blank %}
           {% if cards_shown >= 4 %}{% break %}{% endif %}

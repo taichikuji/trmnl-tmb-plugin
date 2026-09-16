@@ -92,40 +92,26 @@
 
 <style>
   /* Scoped to this recipe: safe when two instances share a mashup. */
-  .tmb-board { --tmb-gap: 10px; gap: var(--tmb-gap); }
-  .tmb-board .tmb-heading { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-  .tmb-board .tmb-heading .title { min-width: 0; font-weight: bold; }
-  .tmb-board .tmb-summary { width: 100%; text-align: left; }
-  .tmb-board .tmb-card-grid { width: 100%; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
-  .tmb-board .tmb-content { min-width: 0; }
-  .tmb-board .tmb-tabs { width: 100%; display: flex; align-items: center; gap: 12px; }
-  .tmb-board .tmb-tab { font-weight: bold; padding-bottom: 3px; border-bottom: 3px solid currentColor; }
+  .tmb-board .tmb-heading { align-items: baseline; }
+  .tmb-board .tmb-tab { padding-bottom: 3px; border-bottom: 3px solid currentColor; }
   .tmb-board .tmb-line-card { position: relative; gap: 10px; min-height: 64px; padding: 9px 10px 9px 14px; border: 1px solid currentColor; overflow: hidden; }
   .tmb-board .tmb-line-rail { position: absolute; inset: 0 auto 0 0; width: 5px; }
-  .tmb-board .tmb-line-meta { align-self: center; }
-  .tmb-board .tmb-line-badge { min-width: 38px; padding: 7px 5px; text-align: center; font-weight: bold; }
+  .tmb-board .tmb-line-badge { min-width: 38px; padding: 7px 5px; }
   .tmb-board .tmb-line-route { display: block; margin-bottom: 5px; font-weight: bold; }
-  .tmb-board .tmb-line-status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 9px; }
+  .tmb-board .tmb-line-status { row-gap: 4px; }
   .tmb-board .tmb-alert-symbol { width: 1.25em; height: 1.25em; vertical-align: -0.25em; }
-  .tmb-board .tmb-source { width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: auto; text-align: right; }
-  .tmb-board .tmb-source .qr-code { display: block; box-sizing: content-box; width: 99px; height: 99px; padding: 8px; background: white; }
-  .tmb-board .tmb-state { margin: auto; width: 100%; text-align: center; }
-  .tmb-board .tmb-state-symbol { margin: 0 auto 12px; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: bold; }
+  .tmb-board .tmb-source .qr-code { display: block; box-sizing: content-box; width: 99px; height: 99px; padding: 8px; background: var(--white); }
+  .tmb-board .tmb-state { margin: auto; }
+  .tmb-board .tmb-state-symbol { margin: 0 auto 12px; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; font-size: 30px; }
   .tmb-board .tmb-state .description { margin: 8px auto 0; max-width: 32em; }
-  .tmb-board--quadrant .tmb-more { margin-top: auto; }
-  .tmb-board--half_horizontal, .tmb-board--half_vertical, .tmb-board--quadrant { --tmb-gap: 6px; }
-  .tmb-board--half_vertical .tmb-card-grid, .tmb-board--quadrant .tmb-card-grid { grid-template-columns: 1fr; }
-  .tmb-board--half_horizontal .tmb-card-grid, .tmb-board--half_vertical .tmb-card-grid, .tmb-board--quadrant .tmb-card-grid { gap: 5px 8px; }
   .tmb-board--half_horizontal .tmb-line-card, .tmb-board--half_vertical .tmb-line-card, .tmb-board--quadrant .tmb-line-card { min-height: 46px; padding: 5px 7px 5px 11px; gap: 7px; }
   .tmb-board--half_horizontal .tmb-line-badge, .tmb-board--half_vertical .tmb-line-badge, .tmb-board--quadrant .tmb-line-badge { min-width: 32px; padding: 4px; }
   .tmb-board--half_horizontal .tmb-line-route, .tmb-board--half_vertical .tmb-line-route, .tmb-board--quadrant .tmb-line-route { margin-bottom: 1px; }
   .tmb-board--quadrant .tmb-line-cause { display: none; }
-  .screen--lg .tmb-board { --tmb-gap: 16px; }
   .screen--lg .tmb-board .tmb-line-card { min-height: 92px; padding: 14px 16px 14px 22px; gap: 16px; }
   .screen--lg .tmb-board .tmb-line-rail { width: 7px; }
   .screen--lg .tmb-board .tmb-line-badge { min-width: 52px; padding: 10px 7px; }
   .screen--lg .tmb-board .tmb-source .qr-code { width: 144px; height: 144px; padding: 12px; }
-  .tmb-board--dense { --tmb-gap: 6px; }
   .tmb-board--dense .tmb-card-grid { gap: 5px 10px; }
   .tmb-board--dense .tmb-line-card { min-height: 42px; padding: 4px 8px 4px 12px; }
   .tmb-board--dense .tmb-line-badge { min-width: 34px; padding: 4px; }
@@ -144,8 +130,6 @@
   .screen--color-4bwry .tmb-alert-symbol { color: var(--red) !important; }
   .screen--color-4bwry .tmb-line-badge.bg--green { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
   .screen--lg .tmb-board .tmb-state-symbol { width: 72px; height: 72px; font-size: 44px; }
-  /* Keep short mashup slots useful even in portrait. */
-  .tmb-board--half_horizontal .tmb-heading, .tmb-board--quadrant .tmb-heading { flex-wrap: nowrap; }
 </style>
 
 {% template line_card %}
@@ -191,10 +175,10 @@
   {% case line_cause %}{% when 'MAINTENANCE' %}{% assign line_cause_label = words[12] %}{% when 'CONSTRUCTION' %}{% assign line_cause_label = words[13] %}{% endcase %}
   <div class="item tmb-line-card" data-line-id="{{ line_id | escape }}">
     <span class="tmb-line-rail {{ line_color }}"></span>
-    <div class="tmb-line-meta"><span class="label lg:label--large tmb-line-badge {{ line_color }} {{ line_text }}">{{ line_id | escape }}</span></div>
-    <div class="content tmb-content">
+    <div class="tmb-line-meta self--center"><span class="label lg:label--large tmb-line-badge text--center text--bold {{ line_color }} {{ line_text }}">{{ line_id | escape }}</span></div>
+    <div class="content tmb-content w--min-0">
       <span class="title title--small lg:title--base tmb-line-route" data-clamp="1">{{ route | escape }}</span>
-      <div class="tmb-line-status">
+      <div class="tmb-line-status flex flex--row flex--wrap flex--center-y gap--[9px]">
         <span class="label label--small lg:label--base"><svg class="tmb-alert-symbol {% if line_status == 'SEVERE' %}text--red{% else %}text--orange{% endif %}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M1.958 17.563c-.278 0-.486-.119-.625-.355s-.139-.472 0-.708L9.374 2.604c.153-.236.361-.354.625-.354s.473.118.625.354L18.666 16.5c.139.236.139.472 0 .708s-.347.355-.625.355H1.958Zm8.125-9.438a.609.609 0 0 0-.448.177.609.609 0 0 0-.177.448v3.375c0 .181.059.33.177.448a.609.609 0 0 0 .448.177c.18 0 .329-.059.448-.177a.609.609 0 0 0 .177-.448V8.75a.609.609 0 0 0-.177-.448.609.609 0 0 0-.448-.177Zm0 6.938a.62.62 0 0 0 .458-.198.647.647 0 0 0 .188-.469.596.596 0 0 0-.188-.448.642.642 0 0 0-.458-.177.626.626 0 0 0-.458.187.626.626 0 0 0-.188.459c0 .18.063.333.188.458s.278.188.458.188Zm-6.979 1.125h13.791L9.999 4.271 3.104 16.188Z"/></svg> {{ line_status_label | escape }}</span>
         <span class="label label--small lg:label--base">{{ line_notice_count }} {% if line_notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>
         {% if line_cause_label != blank %}<span class="label label--small lg:label--base tmb-line-cause">{{ line_cause_label | escape }}</span>{% endif %}

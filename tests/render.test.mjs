@@ -74,7 +74,7 @@ test('full view always renders every affected line in a fixed two-column grid', 
   const crowded = await render('full', fixtures.crowded);
   assert.equal((website.match(/class="item tmb-line-card"/g) || []).length, 6);
   assert.equal((crowded.match(/class="item tmb-line-card"/g) || []).length, 11);
-  assert.match(website, /class="tmb-card-grid"/);
+  assert.match(website, /class="tmb-card-grid [^"]*grid grid--cols-2/);
   assert.doesNotMatch(website, /class="columns tmb-list"/);
 });
 
