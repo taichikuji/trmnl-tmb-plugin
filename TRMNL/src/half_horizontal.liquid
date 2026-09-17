@@ -12,7 +12,7 @@
   {% else %}
     {% assign cards_shown = 0 %}
     <div class="tmb-card-grid w--full h--min-0 grid grid--cols-2 gap--xsmall lg:gap--medium">
-      {% for line_id in priority_affected_line_ids %}
+      {% for line_id in affected_line_ids %}
         {% if line_id != blank %}
           {% if cards_shown >= 4 %}{% break %}{% endif %}
           {% assign cards_shown = cards_shown | plus: 1 %}

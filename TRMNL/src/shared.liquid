@@ -6,13 +6,13 @@
 {% case user_lang %}
   {% when "spanish" %}
     {% assign lang_suffix = "Es" %}
-    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Mantenimiento|Obras|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE" | split: "|" %}
+    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Mantenimiento|Obras|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE|Causa desconocida" | split: "|" %}
   {% when "catalan" %}
     {% assign lang_suffix = "Ca" %}
-    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Manteniment|Obres|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT" | split: "|" %}
+    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Manteniment|Obres|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT|Raó desconeguda" | split: "|" %}
   {% else %}
     {% assign lang_suffix = "En" %}
-    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|Maintenance|Works|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT" | split: "|" %}
+    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|Maintenance|Works|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Unknown Cause" | split: "|" %}
 {% endcase %}
 {% assign data_available = false %}
 {% assign alerts_json_start = data.alerts | json | slice: 0, 1 %}
@@ -24,8 +24,6 @@
 {% assign severe_indices = "" %}
 {% assign warning_indices = "" %}
 {% assign other_indices = "" %}
-{% assign affected_ids = "|" %}
-{% assign affected_count = 0 %}
 {% assign notice_count = 0 %}
 {% for alert in sorted_alerts %}
   {% assign effect_code = alert.categories.effect_code | default: alert.effect.code | upcase %}
@@ -34,47 +32,15 @@
     {% assign notice_count = notice_count | plus: 1 %}
     {% assign status = alert.categories.effect_status | upcase %}
     {% case status %}
-      {% when 'SEVERE' %}
-        {% assign severe_indices = severe_indices | append: forloop.index0 | append: ',' %}
-      {% when 'WARNING' %}
-        {% assign warning_indices = warning_indices | append: forloop.index0 | append: ',' %}
-      {% else %}
-        {% assign other_indices = other_indices | append: forloop.index0 | append: ',' %}
+      {% when 'SEVERE' %}{% assign severe_indices = severe_indices | append: forloop.index0 | append: ',' %}
+      {% when 'WARNING' %}{% assign warning_indices = warning_indices | append: forloop.index0 | append: ',' %}
+      {% else %}{% assign other_indices = other_indices | append: forloop.index0 | append: ',' %}
     {% endcase %}
-    {% for entity in alert.entities %}
-      {% assign line_id = entity.line_name | strip %}
-      {% assign line_code = entity.line_code | append: '' %}
-      {% if line_id == blank and line_code == '99' %}{% assign line_id = 'FM' %}{% endif %}
-      {% if line_id != blank %}
-        {% assign token = line_id | prepend: '|' | append: '|' %}
-        {% unless affected_ids contains token %}
-          {% assign affected_ids = affected_ids | append: line_id | append: '|' %}
-          {% assign affected_count = affected_count | plus: 1 %}
-        {% endunless %}
-      {% endif %}
-    {% endfor %}
   {% endif %}
 {% endfor %}
 {% assign ordered_indices = severe_indices | append: warning_indices | append: other_indices | split: ',' %}
-{% assign affected_line_ids = affected_ids | split: '|' %}
-{% assign lines_data = "L1;Hospital de Bellvitge / Fondo|L2;Paral·lel / Badalona Pompeu Fabra|L3;Zona Universitària / Trinitat Nova|L4;La Pau / Trinitat Nova|L5;Cornellà Centre / Vall d’Hebron|L9N;La Sagrera / Can Zam|L9S;Aeroport T1 / Zona Universitària|L10N;La Sagrera / Gorg|L10S;ZAL | Riu Vell / Collblanc|L11;Trinitat Nova / Can Cuiàs|FM;Paral·lel / Parc de Montjuïc" | split: '|' %}
-{% assign ordered_affected_ids = '|' %}
-{% for line_string in lines_data %}
-  {% assign line_parts = line_string | split: ';' %}
-  {% assign token = line_parts[0] | prepend: '|' | append: '|' %}
-  {% if affected_ids contains token %}{% assign ordered_affected_ids = ordered_affected_ids | append: line_parts[0] | append: '|' %}{% endif %}
-{% endfor %}
-{% for line_id in affected_line_ids %}
-  {% assign token = line_id | prepend: '|' | append: '|' %}
-  {% unless line_id == blank or ordered_affected_ids contains token %}{% assign ordered_affected_ids = ordered_affected_ids | append: line_id | append: '|' %}{% endunless %}
-{% endfor %}
-{% assign affected_line_ids = ordered_affected_ids | split: '|' %}
-{%- capture affected_summary -%}
-  {%- if data_available -%}
-    {{- affected_count }} {% if affected_count == 1 %}{{ words[3] }}{% else %}{{ words[4] }}{% endif -%}
-  {%- endif -%}
-{%- endcapture -%}
-{% assign priority_affected_ids = '|' %}
+{% assign affected_ids = '|' %}
+{% assign affected_count = 0 %}
 {% for index_string in ordered_indices %}
   {% assign alert_index = index_string | plus: 0 %}
   {% assign alert = sorted_alerts[alert_index] %}
@@ -83,12 +49,19 @@
     {% assign line_code = entity.line_code | append: '' %}
     {% if line_id == blank and line_code == '99' %}{% assign line_id = 'FM' %}{% endif %}
     {% assign token = line_id | prepend: '|' | append: '|' %}
-    {% unless line_id == blank or priority_affected_ids contains token %}
-      {% assign priority_affected_ids = priority_affected_ids | append: line_id | append: '|' %}
+    {% unless line_id == blank or affected_ids contains token %}
+      {% assign affected_ids = affected_ids | append: line_id | append: '|' %}
+      {% assign affected_count = affected_count | plus: 1 %}
     {% endunless %}
   {% endfor %}
 {% endfor %}
-{% assign priority_affected_line_ids = priority_affected_ids | split: '|' %}
+{% assign affected_line_ids = affected_ids | split: '|' %}
+{% assign lines_data = "L1;Hospital de Bellvitge / Fondo|L2;Paral·lel / Badalona Pompeu Fabra|L3;Zona Universitària / Trinitat Nova|L4;La Pau / Trinitat Nova|L5;Cornellà Centre / Vall d’Hebron|L9N;La Sagrera / Can Zam|L9S;Aeroport T1 / Zona Universitària|L10N;La Sagrera / Gorg|L10S;ZAL | Riu Vell / Collblanc|L11;Trinitat Nova / Can Cuiàs|FM;Paral·lel / Parc de Montjuïc" | split: '|' %}
+{%- capture affected_summary -%}
+  {%- if data_available -%}
+    {{- affected_count }} {% if affected_count == 1 %}{{ words[3] }}{% else %}{{ words[4] }}{% endif -%}
+  {%- endif -%}
+{%- endcapture -%}
 {%- capture svg_logo -%}
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.00071907 -0.0010941 93.88 70.99" width="256" height="256">
 	<path d="M73 37.14H69.52l-.99 3.53h3.61c.53-.04 1.08-.06 1.65-.55.37-.28.67-.72.8-1.18.48-1.7-1.05-1.78-1.58-1.8Zm1.78-6.9H71.46l-.87 3.09h3.2c.54 0 1.88 0 2.31-1.52.41-1.5-.81-1.56-1.32-1.58ZM61.71 44.58 66.8 26.39H77.57c1.12.05 3.21.13 4.2 1.47.61.77.69 1.98.36 3.14-.38 1.34-1.26 2.47-2.18 3.19-.63.49-1.15.7-1.82.98.69.21 1.31.39 1.83 1.11.75 1 .59 2.19.34 3.09-.37 1.37-1.18 2.78-2.37 3.71-1.75 1.39-3.65 1.45-5.08 1.5H61.72Zm-25.24-0 5.09-18.19h8.22l-.11 8.4c-.1 1.8-.14 2.21-.34 3.86.96-2.24 1.2-2.7 2.1-4.46l4.24-7.8h8.22L58.8 44.58H53.33l2.94-10.51c.41-1.34.52-1.68 1.06-3.22-.7 1.36-.82 1.62-1.55 2.94L49.74 44.58H45.47l.05-10.23c.02-1.47 0-1.5.1-3.4-.23 1.14-.29 1.42-.58 2.45L41.91 44.58H36.45ZM24.68 26.36H39.64l-1.26 4.51H33.77L29.93 44.58H24.19l3.84-13.71H23.41ZM.58 48.95S.24 22.8 33.93 12.63c0 0-26.27 11.87-26.27 33.8 0 11.54 7.77 24.56 31.98 24.56S87.72 51.8 92.4 36.38C97.09 20.96 90.3 9.44 76.19 3.37 60.77-3.25 35.99.18 20.23 11.03-5.28 28.59.58 48.95.58 48.95" fill="#000000"/>
@@ -177,7 +150,7 @@
   {% assign line_status_label = line_status | default: words[11] %}
   {% case line_status %}{% when 'SEVERE' %}{% assign line_status_label = words[9] %}{% when 'WARNING' %}{% assign line_status_label = words[10] %}{% when 'INFO', 'INFORMATION' %}{% assign line_status_label = words[11] %}{% endcase %}
   {% assign line_cause_label = line_cause %}
-  {% case line_cause %}{% when 'MAINTENANCE' %}{% assign line_cause_label = words[12] %}{% when 'CONSTRUCTION' %}{% assign line_cause_label = words[13] %}{% endcase %}
+  {% case line_cause %}{% when 'MAINTENANCE' %}{% assign line_cause_label = words[12] %}{% when 'CONSTRUCTION' %}{% assign line_cause_label = words[13] %}{% when 'UNKNOWN_CAUSE' %}{% assign line_cause_label = words[23] %}{% endcase %}
   <div class="item tmb-line-card" data-line-id="{{ line_id | escape }}">
     <span class="tmb-line-rail {{ line_color }}"></span>
     <div class="tmb-line-meta self--center"><span class="label lg:label--large tmb-line-badge text--center text--bold {{ line_color }} {{ line_text }}">{{ line_id | escape }}</span></div>

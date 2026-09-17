@@ -9,7 +9,7 @@ Install it [here](https://trmnl.com/recipes/247650)!
 - Catalan, Spanish and English
 - TMB-inspired line cards with official route colors
 - A scannable link to TMB's live metro status page
-- Severity-first compact views with affected-line notice counts
+- Severity-first affected lines, newest first within each level
 - Responsive overflow for TRMNL X landscape and portrait views
 - Palette-aware colors for grayscale and four-ink BWRY screens
 - Separate all-clear and unavailable-data states
