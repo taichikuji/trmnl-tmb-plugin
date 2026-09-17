@@ -38,4 +38,4 @@ Previews use synthetic service notices and do not represent live TMB status.
 - **half_vertical.liquid**: Up to seven affected lines in a single column.
 - **quadrant.liquid**: The two highest-priority affected lines plus the remaining-line count.
 
-The layouts use Framework 3.3 responsive clamps, overflow handling and palette-aware color utilities. The same markup renders in grayscale, on the black/white/red/yellow BWRY palette, and at TRMNL X landscape or portrait sizes.
+The layouts use Framework 3.3.1 responsive clamps, overflow handling and palette-aware color utilities. The same markup renders in grayscale, on the black/white/red/yellow BWRY palette, and at TRMNL X landscape or portrait sizes.

@@ -18,7 +18,7 @@
         {% if line_id != blank %}{% render 'line_card', line_id: line_id, sorted_alerts: sorted_alerts, ordered_indices: ordered_indices, lines_data: lines_data, words: words %}{% endif %}
       {% endfor %}
     </div>
-    <div class="tmb-source w--full flex flex--row flex--right flex--center-y gap--[10px] mt--auto text--right">
+    <div class="tmb-source w--full flex flex--row flex--right flex--center-y gap--[10px] text--right">
       <span class="label lg:label--large">{{ words[21] }}</span>
       <span>{{ "https://www.tmb.cat/es/transporte-barcelona/estado-red-metro" | qr_code: 3, "l" }}</span>
     </div>
