@@ -6,13 +6,13 @@
 {% case user_lang %}
   {% when "spanish" %}
     {% assign lang_suffix = "Es" %}
-    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Mantenimiento|Obras|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE|Causa desconocida" | split: "|" %}
+    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Mantenimiento|Obras|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada" | split: "|" %}
   {% when "catalan" %}
     {% assign lang_suffix = "Ca" %}
-    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Manteniment|Obres|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT|Raó desconeguda" | split: "|" %}
+    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Manteniment|Obres|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada" | split: "|" %}
   {% else %}
     {% assign lang_suffix = "En" %}
-    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|Maintenance|Works|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Unknown Cause" | split: "|" %}
+    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|Maintenance|Works|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial Service|Disruption|Service stopped|Service disruption|Info not available|Line stopped" | split: "|" %}
 {% endcase %}
 {% assign data_available = false %}
 {% assign alerts_json_start = data.alerts | json | slice: 0, 1 %}
@@ -86,7 +86,7 @@
   .tmb-board--half_horizontal .tmb-line-card, .tmb-board--half_vertical .tmb-line-card, .tmb-board--quadrant .tmb-line-card { min-height: 46px; padding: 5px 7px 5px 11px; gap: 7px; }
   .tmb-board--half_horizontal .tmb-line-badge, .tmb-board--half_vertical .tmb-line-badge, .tmb-board--quadrant .tmb-line-badge { min-width: 32px; padding: 4px; }
   .tmb-board--half_horizontal .tmb-line-route, .tmb-board--half_vertical .tmb-line-route, .tmb-board--quadrant .tmb-line-route { margin-bottom: 1px; }
-  .tmb-board--quadrant .tmb-line-cause { display: none; }
+  .tmb-board--quadrant .tmb-line-effect { display: none; }
   .screen--lg .tmb-board .tmb-line-card { min-height: 92px; padding: 14px 16px 14px 22px; gap: 16px; }
   .screen--lg .tmb-board .tmb-line-rail { width: 7px; }
   .screen--lg .tmb-board .tmb-line-badge { min-width: 52px; padding: 10px 7px; }
@@ -118,7 +118,7 @@
   {% endfor %}
   {% assign line_notice_count = 0 %}
   {% assign line_status = '' %}
-  {% assign line_cause = '' %}
+  {% assign line_effect_code = '' %}
   {% for index_string in ordered_indices %}
     {% assign alert_index = index_string | plus: 0 %}
     {% assign alert = sorted_alerts[alert_index] %}
@@ -133,7 +133,7 @@
       {% assign line_notice_count = line_notice_count | plus: 1 %}
       {% assign alert_status = alert.categories.effect_status | upcase %}
       {% if alert_status == 'SEVERE' or line_status == blank %}{% assign line_status = alert_status %}{% endif %}
-      {% if line_cause == blank %}{% assign line_cause = alert.categories.cause_code | upcase %}{% endif %}
+      {% if line_effect_code == blank %}{% assign line_effect_code = alert.categories.effect_code | default: alert.effect.code | upcase %}{% endif %}
     {% endif %}
   {% endfor %}
   {% assign line_color = 'bg--black' %}
@@ -149,8 +149,8 @@
   {% endcase %}
   {% assign line_status_label = line_status | default: words[11] %}
   {% case line_status %}{% when 'SEVERE' %}{% assign line_status_label = words[9] %}{% when 'WARNING' %}{% assign line_status_label = words[10] %}{% when 'INFO', 'INFORMATION' %}{% assign line_status_label = words[11] %}{% endcase %}
-  {% assign line_cause_label = line_cause %}
-  {% case line_cause %}{% when 'MAINTENANCE' %}{% assign line_cause_label = words[12] %}{% when 'CONSTRUCTION' %}{% assign line_cause_label = words[13] %}{% when 'UNKNOWN_CAUSE' %}{% assign line_cause_label = words[23] %}{% endcase %}
+  {% assign line_effect_label = words[24] %}
+  {% case line_effect_code %}{% when 'PP1', 'NP3' %}{% assign line_effect_label = words[23] %}{% when 'PP5', 'PP10' %}{% assign line_effect_label = words[25] %}{% when 'PP11', 'NP12' %}{% assign line_effect_label = words[26] %}{% when 'PP99' %}{% assign line_effect_label = words[27] %}{% when 'NP1', 'NP2', 'NP9' %}{% assign line_effect_label = words[28] %}{% endcase %}
   <div class="item tmb-line-card" data-line-id="{{ line_id | escape }}">
     <span class="tmb-line-rail {{ line_color }}"></span>
     <div class="tmb-line-meta self--center"><span class="label lg:label--large tmb-line-badge text--center text--bold {{ line_color }} {{ line_text }}">{{ line_id | escape }}</span></div>
@@ -159,7 +159,7 @@
       <div class="tmb-line-status flex flex--row flex--wrap flex--center-y gap--[9px]">
         <span class="label label--small lg:label--base"><svg class="tmb-alert-symbol {% if line_status == 'SEVERE' %}text--red{% else %}text--orange{% endif %}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M1.958 17.563c-.278 0-.486-.119-.625-.355s-.139-.472 0-.708L9.374 2.604c.153-.236.361-.354.625-.354s.473.118.625.354L18.666 16.5c.139.236.139.472 0 .708s-.347.355-.625.355H1.958Zm8.125-9.438a.609.609 0 0 0-.448.177.609.609 0 0 0-.177.448v3.375c0 .181.059.33.177.448a.609.609 0 0 0 .448.177c.18 0 .329-.059.448-.177a.609.609 0 0 0 .177-.448V8.75a.609.609 0 0 0-.177-.448.609.609 0 0 0-.448-.177Zm0 6.938a.62.62 0 0 0 .458-.198.647.647 0 0 0 .188-.469.596.596 0 0 0-.188-.448.642.642 0 0 0-.458-.177.626.626 0 0 0-.458.187.626.626 0 0 0-.188.459c0 .18.063.333.188.458s.278.188.458.188Zm-6.979 1.125h13.791L9.999 4.271 3.104 16.188Z"/></svg> {{ line_status_label | escape }}</span>
         <span class="label label--small lg:label--base">{{ line_notice_count }} {% if line_notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>
-        {% if line_cause_label != blank %}<span class="label label--small lg:label--base tmb-line-cause">{{ line_cause_label | escape }}</span>{% endif %}
+        <span class="label label--small lg:label--base tmb-line-effect">{{ line_effect_label | escape }}</span>
       </div>
     </div>
   </div>
