@@ -6,13 +6,13 @@
 {% case user_lang %}
   {% when "spanish" %}
     {% assign lang_suffix = "Es" %}
-    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Mantenimiento|Obras|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada" | split: "|" %}
+    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada" | split: "|" %}
   {% when "catalan" %}
     {% assign lang_suffix = "Ca" %}
-    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Manteniment|Obres|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada" | split: "|" %}
+    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada" | split: "|" %}
   {% else %}
     {% assign lang_suffix = "En" %}
-    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|Maintenance|Works|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial Service|Disruption|Service stopped|Service disruption|Info not available|Line stopped" | split: "|" %}
+    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial Service|Disruption|Service stopped|Service disruption|Info not available|Line stopped" | split: "|" %}
 {% endcase %}
 {% assign data_available = false %}
 {% assign alerts_json_start = data.alerts | json | slice: 0, 1 %}
@@ -111,7 +111,7 @@
 </style>
 
 {% template line_card %}
-  {% assign route = words[18] %}
+  {% assign route = words[16] %}
   {% for line_string in lines_data %}
     {% assign line_parts = line_string | split: ';' %}
     {% if line_parts[0] == line_id %}{% assign route = line_parts[1] %}{% break %}{% endif %}
@@ -149,8 +149,8 @@
   {% endcase %}
   {% assign line_status_label = line_status | default: words[11] %}
   {% case line_status %}{% when 'SEVERE' %}{% assign line_status_label = words[9] %}{% when 'WARNING' %}{% assign line_status_label = words[10] %}{% when 'INFO', 'INFORMATION' %}{% assign line_status_label = words[11] %}{% endcase %}
-  {% assign line_effect_label = words[24] %}
-  {% case line_effect_code %}{% when 'PP1', 'NP3' %}{% assign line_effect_label = words[23] %}{% when 'PP5', 'PP10' %}{% assign line_effect_label = words[25] %}{% when 'PP11', 'NP12' %}{% assign line_effect_label = words[26] %}{% when 'PP99' %}{% assign line_effect_label = words[27] %}{% when 'NP1', 'NP2', 'NP9' %}{% assign line_effect_label = words[28] %}{% endcase %}
+  {% assign line_effect_label = words[22] %}
+  {% case line_effect_code %}{% when 'PP1', 'NP3' %}{% assign line_effect_label = words[21] %}{% when 'PP5', 'PP10' %}{% assign line_effect_label = words[23] %}{% when 'PP11', 'NP12' %}{% assign line_effect_label = words[24] %}{% when 'PP99' %}{% assign line_effect_label = words[25] %}{% when 'NP1', 'NP2', 'NP9' %}{% assign line_effect_label = words[26] %}{% endcase %}
   <div class="item tmb-line-card" data-line-id="{{ line_id | escape }}">
     <span class="tmb-line-rail {{ line_color }}"></span>
     <div class="tmb-line-meta self--center"><span class="label lg:label--large tmb-line-badge text--center text--bold {{ line_color }} {{ line_text }}">{{ line_id | escape }}</span></div>

@@ -11,7 +11,7 @@
     </div>
   {% else %}
     <div class="tmb-tabs w--full flex flex--row flex--left flex--center-y gap--[12px]">
-      <span class="label lg:label--large text--red text--bold tmb-tab">{{ words[22] }}</span>
+      <span class="label lg:label--large text--red text--bold tmb-tab">{{ words[20] }}</span>
     </div>
     <div class="tmb-card-grid w--full h--min-0 grid grid--cols-2 gap--small lg:gap--medium">
       {% for line_id in affected_line_ids %}
@@ -19,7 +19,7 @@
       {% endfor %}
     </div>
     <div class="tmb-source w--full flex flex--row flex--right flex--center-y gap--[10px] text--right">
-      <span class="label lg:label--large">{{ words[21] }}</span>
+      <span class="label lg:label--large">{{ words[19] }}</span>
       <span>{{ "https://www.tmb.cat/es/transporte-barcelona/estado-red-metro" | qr_code: 3, "l" }}</span>
     </div>
   {% endif %}
