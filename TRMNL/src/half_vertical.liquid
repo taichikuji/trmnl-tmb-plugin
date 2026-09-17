@@ -14,7 +14,7 @@
     <div class="tmb-card-grid w--full h--min-0 grid grid--cols-1 gap--xsmall lg:gap--medium">
       {% for line_id in priority_affected_line_ids %}
         {% if line_id != blank %}
-          {% if cards_shown >= 6 %}{% break %}{% endif %}
+          {% if cards_shown >= 7 %}{% break %}{% endif %}
           {% assign cards_shown = cards_shown | plus: 1 %}
           {% render 'line_card', line_id: line_id, sorted_alerts: sorted_alerts, ordered_indices: ordered_indices, lines_data: lines_data, words: words %}
         {% endif %}
