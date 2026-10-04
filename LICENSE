@@ -19,3 +19,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+TRMNL public recipe license
+
+The original TMB Metro Alerts visual design, data parsing logic and markup are
+also licensed under Creative Commons Attribution 4.0 International (CC BY 4.0),
+as required for public TRMNL recipes: https://creativecommons.org/licenses/by/4.0/
+Attribution: TMB Metro Alerts by Iván Pérez, copyright 2026.
+Source: https://github.com/taichikuji/trmnl-tmb-plugin
+Third-party data, images and logos retain their respective terms.
