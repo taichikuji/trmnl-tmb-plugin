@@ -12,7 +12,7 @@ The plugin icon is stored in the TRMNL bundle and referenced from settings.yml.
 
 ## Previews
 
-Previews use synthetic service notices and do not represent live TMB status.
+Previews render the current Liquid templates with three synthetic service notices for L1, L3 and L5. They are demo images and do not represent live TMB status.
 
 | Full View | Half Horizontal View |
 |------------|----------------------|
