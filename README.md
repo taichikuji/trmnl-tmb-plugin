@@ -8,7 +8,7 @@ Barcelona Metro service notices on your TRMNL, with affected lines ordered by se
 
 ![Barcelona Metro service notices arranged by line on TRMNL](TRMNL/media/preview_full.webp)
 
-Demo notices, not live service status. [All layout previews](TRMNL#previews).
+Demo notices, not live service status. [All layout previews](TRMNL/README.md#previews).
 
 ## Settings
 
@@ -26,7 +26,7 @@ cd TRMNL
 trmnlp serve
 ```
 
-Keep credentials out of commits and public previews. Templates and settings live in [TRMNL/src/](TRMNL/src/); see the [plugin guide](TRMNL) for setup and layout details.
+Keep credentials out of commits and public previews. Templates and settings live in [TRMNL/src/](TRMNL/src/); see the [plugin guide](TRMNL/README.md) for setup and layout details.
 
 Data from [TMB](https://www.tmb.cat/en/barcelona-transport/status-metro-network)'s Metro alerts feed.
 
