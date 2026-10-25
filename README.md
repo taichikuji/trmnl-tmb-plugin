@@ -1,28 +1,33 @@
-# TMB Alerts for TRMNL
+# TMB Metro Alerts
 
-A TRMNL plugin for current Barcelona Metro service notices, with full, half and quadrant layouts for TRMNL OG, BWRY and TRMNL X.
+Barcelona Metro service notices on your TRMNL, with affected lines ordered by severity and a QR link to TMB's live status page. Know when things are running smoothly and when to plan another route.
 
-Install it [here](https://trmnl.com/recipes/247650)!
+<a href="https://trmnl.com/recipes/247650"><img width="150" alt="Works with TRMNL" src="https://trmnl.com/images/brand/badges/light/works-with-trmnl/trmnl-badge-works-with-light.svg" /></a>
 
-## Features
+[Install on TRMNL](https://trmnl.com/recipes/247650)
 
-- Catalan, Spanish and English
-- TMB-inspired line cards with official route colors
-- A scannable link to TMB's live metro status page
-- Severity-first affected lines, newest first within each level
-- Responsive overflow for TRMNL X landscape and portrait views
-- Palette-aware colors for grayscale and four-ink BWRY screens
-- Separate all-clear and unavailable-data states
+![Barcelona Metro service notices arranged by line on TRMNL](TRMNL/media/preview_full.webp)
 
-## Local development
+Demo notices, not live service status. [All layout previews](TRMNL#previews).
 
-Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), add local values for the three custom fields, then preview all four layouts.
+## Settings
 
-## References
+- **App ID** and **App Key:** register free at the [TMB developer portal](https://developer.tmb.cat/docs/getting-started).
+- **Language:** English, Spanish or Catalan (defaults to English).
 
-- [TMB Developer portal](https://developer.tmb.cat/docs/getting-started)
-- [TMB UI API endpoint](https://www.tmb.cat/en/barcelona-transport/status-metro-network)
-- [TRMNL screen templating](https://docs.trmnl.com/go/private-plugins/templates)
-- [TRMNL X guide](https://trmnl.com/framework/docs/3.3/trmnl_x_guide)
-- [TRMNL color palettes](https://trmnl.com/framework/docs/color_palettes)
-- [TRMNL QR code filter](https://help.usetrmnl.com/en/articles/10347358-custom-plugin-filters)
+Full shows all affected lines and the QR code; half horizontal shows up to four lines, half vertical up to seven, and quadrant the two highest-priority lines plus a remaining count. Supports TRMNL OG, BWRY and TRMNL X, including portrait. Data refreshes every 30 minutes.
+
+## Develop locally
+
+Install [trmnlp](https://github.com/usetrmnl/trmnlp). Add `custom_fields.userAppId`, `custom_fields.userAppKey` and `custom_fields.userLanguage` to your local [TRMNL/.trmnlp.yml](TRMNL/.trmnlp.yml), then run from the repository root:
+
+```sh
+cd TRMNL
+trmnlp serve
+```
+
+Keep credentials out of commits and public previews. Templates and settings live in [TRMNL/src/](TRMNL/src/); see the [plugin guide](TRMNL) for setup and layout details.
+
+Data from [TMB](https://www.tmb.cat/en/barcelona-transport/status-metro-network)'s Metro alerts feed.
+
+[Questions or ideas?](https://github.com/taichikuji/trmnl-tmb-plugin/issues) · [License](LICENSE)
