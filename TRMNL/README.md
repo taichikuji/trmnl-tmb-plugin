@@ -12,7 +12,7 @@ The plugin icon is stored in the TRMNL bundle and referenced from settings.yml.
 
 ## Previews
 
-Previews render the current Liquid templates with three synthetic service notices for L1, L3 and L5. They are demo images and do not represent live TMB status.
+Previews render the current Liquid templates with three synthetic service notices for L1, L2 and L3, including partial service and station disruptions. They are demo images and do not represent live TMB status.
 
 | Full View | Half Horizontal View |
 |------------|----------------------|
@@ -32,14 +32,20 @@ Previews render the current Liquid templates with three synthetic service notice
 
 ## Templates
 
-- **shared.liquid**: Feed normalization, translations, priority ordering, shared styles and the reusable line-card component.
+- **shared.liquid**: Disruption-date filtering, translations, circulation priority, shared styles and the reusable line-card component.
 - **full.liquid**: All affected lines in a two-column grid, plus a QR link to TMB's live detail page.
 - **half_horizontal.liquid**: Up to four affected lines in a 2×2 grid.
 - **half_vertical.liquid**: Up to seven affected lines in a single column.
 - **quadrant.liquid**: The two highest-priority affected lines plus the remaining-line count.
 
-The layouts use Framework 3.3.1 responsive clamps, overflow handling and palette-aware color utilities. The same markup renders in grayscale, on the black/white/red/yellow BWRY palette, and at TRMNL X landscape or portrait sizes.
+Each layout owns its markup and uses Framework 3.3.1 responsive clamps, overflow handling and palette-aware color utilities. The same markup renders in grayscale, on the black/white/red/yellow BWRY palette, and at TRMNL X landscape or portrait sizes.
 
+Run the native Liquid regression checks from the repository root:
+
+```sh
+docker run --rm --network none --entrypoint ruby \
+  -v "$PWD:/plugin:ro" -w /plugin trmnl/trmnlp:latest TRMNL/check.rb
+```
 
 ## Setup
 

@@ -1,110 +1,42 @@
-{% comment %}
-  The WEB feed's existing PP/NP scope is preserved. Full view follows TMB's
-  line-card pattern across every layout.
-{% endcomment %}
-{% assign user_lang = trmnl.plugin_settings.custom_fields_values.userLanguage | default: "english" | downcase %}
-{% case user_lang %}
-  {% when "spanish" %}
-    {% assign lang_suffix = "Es" %}
-    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos de servicio|TMB no comunica incidencias en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Desde|Hasta|más|Aviso de servicio|Red de metro|Próximamente|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada" | split: "|" %}
-  {% when "catalan" %}
-    {% assign lang_suffix = "Ca" %}
-    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos de servei|TMB no comunica incidències en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Des de|Fins a|més|Avís de servei|Xarxa de metro|Properament|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada" | split: "|" %}
-  {% else %}
-    {% assign lang_suffix = "En" %}
-    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No service notices|TMB reports no incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|From|Until|more|Service notice|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial Service|Disruption|Service stopped|Service disruption|Info not available|Line stopped" | split: "|" %}
-{% endcase %}
-{% assign data_available = false %}
-{% assign alerts_json_start = data.alerts | json | slice: 0, 1 %}
-{% if alerts_json_start == '[' %}
-  {% assign data_available = true %}
-{% endif %}
-{% assign sorted_alerts = '' | split: ',' %}
-{% if data_available %}{% assign sorted_alerts = data.alerts | sort: 'tstamp' | reverse %}{% endif %}
-{% assign severe_indices = "" %}
-{% assign warning_indices = "" %}
-{% assign other_indices = "" %}
-{% assign notice_count = 0 %}
-{% for alert in sorted_alerts %}
-  {% assign effect_code = alert.categories.effect_code | default: alert.effect.code | upcase %}
-  {% assign effect_prefix = effect_code | slice: 0, 2 %}
-  {% if effect_prefix == 'PP' or effect_prefix == 'NP' %}
-    {% assign notice_count = notice_count | plus: 1 %}
-    {% assign status = alert.categories.effect_status | upcase %}
-    {% case status %}
-      {% when 'SEVERE' %}{% assign severe_indices = severe_indices | append: forloop.index0 | append: ',' %}
-      {% when 'WARNING' %}{% assign warning_indices = warning_indices | append: forloop.index0 | append: ',' %}
-      {% else %}{% assign other_indices = other_indices | append: forloop.index0 | append: ',' %}
-    {% endcase %}
-  {% endif %}
-{% endfor %}
-{% assign ordered_indices = severe_indices | append: warning_indices | append: other_indices | split: ',' %}
-{% assign affected_ids = '|' %}
-{% assign affected_count = 0 %}
-{% for index_string in ordered_indices %}
-  {% assign alert_index = index_string | plus: 0 %}
-  {% assign alert = sorted_alerts[alert_index] %}
-  {% for entity in alert.entities %}
-    {% assign line_id = entity.line_name | strip %}
-    {% assign line_code = entity.line_code | append: '' %}
-    {% if line_id == blank and line_code == '99' %}{% assign line_id = 'FM' %}{% endif %}
-    {% assign token = line_id | prepend: '|' | append: '|' %}
-    {% unless line_id == blank or affected_ids contains token %}
-      {% assign affected_ids = affected_ids | append: line_id | append: '|' %}
-      {% assign affected_count = affected_count | plus: 1 %}
-    {% endunless %}
-  {% endfor %}
-{% endfor %}
-{% assign affected_line_ids = affected_ids | split: '|' %}
-{% assign lines_data = "L1;Hospital de Bellvitge / Fondo|L2;Paral·lel / Badalona Pompeu Fabra|L3;Zona Universitària / Trinitat Nova|L4;La Pau / Trinitat Nova|L5;Cornellà Centre / Vall d’Hebron|L9N;La Sagrera / Can Zam|L9S;Aeroport T1 / Zona Universitària|L10N;La Sagrera / Gorg|L10S;ZAL | Riu Vell / Collblanc|L11;Trinitat Nova / Can Cuiàs|FM;Paral·lel / Parc de Montjuïc" | split: '|' %}
-{%- capture affected_summary -%}
-  {%- if data_available -%}
-    {{- affected_count }} {% if affected_count == 1 %}{{ words[3] }}{% else %}{{ words[4] }}{% endif -%}
-  {%- endif -%}
-{%- endcapture -%}
-{%- capture svg_logo -%}
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.00071907 -0.0010941 93.88 70.99" width="256" height="256">
-	<path d="M73 37.14H69.52l-.99 3.53h3.61c.53-.04 1.08-.06 1.65-.55.37-.28.67-.72.8-1.18.48-1.7-1.05-1.78-1.58-1.8Zm1.78-6.9H71.46l-.87 3.09h3.2c.54 0 1.88 0 2.31-1.52.41-1.5-.81-1.56-1.32-1.58ZM61.71 44.58 66.8 26.39H77.57c1.12.05 3.21.13 4.2 1.47.61.77.69 1.98.36 3.14-.38 1.34-1.26 2.47-2.18 3.19-.63.49-1.15.7-1.82.98.69.21 1.31.39 1.83 1.11.75 1 .59 2.19.34 3.09-.37 1.37-1.18 2.78-2.37 3.71-1.75 1.39-3.65 1.45-5.08 1.5H61.72Zm-25.24-0 5.09-18.19h8.22l-.11 8.4c-.1 1.8-.14 2.21-.34 3.86.96-2.24 1.2-2.7 2.1-4.46l4.24-7.8h8.22L58.8 44.58H53.33l2.94-10.51c.41-1.34.52-1.68 1.06-3.22-.7 1.36-.82 1.62-1.55 2.94L49.74 44.58H45.47l.05-10.23c.02-1.47 0-1.5.1-3.4-.23 1.14-.29 1.42-.58 2.45L41.91 44.58H36.45ZM24.68 26.36H39.64l-1.26 4.51H33.77L29.93 44.58H24.19l3.84-13.71H23.41ZM.58 48.95S.24 22.8 33.93 12.63c0 0-26.27 11.87-26.27 33.8 0 11.54 7.77 24.56 31.98 24.56S87.72 51.8 92.4 36.38C97.09 20.96 90.3 9.44 76.19 3.37 60.77-3.25 35.99.18 20.23 11.03-5.28 28.59.58 48.95.58 48.95" fill="#000000"/>
-</svg>
-{%- endcapture -%}
-
 <style>
-  /* Scoped to this recipe: safe when two instances share a mashup. */
-  .tmb-board .tmb-heading { align-items: baseline; }
-  .tmb-board .tmb-tab { padding-bottom: 3px; border-bottom: 3px solid currentColor; }
-  .tmb-board .tmb-line-card { position: relative; gap: 10px; min-height: 64px; padding: 9px 10px 9px 14px; border: 1px solid currentColor; overflow: hidden; }
-  .tmb-board .tmb-line-rail { position: absolute; inset: 0 auto 0 0; width: 5px; }
-  .tmb-board .tmb-line-badge { min-width: 38px; padding: 7px 5px; }
-  .tmb-board .tmb-line-route { display: block; margin-bottom: 5px; font-weight: bold; }
-  .tmb-board .tmb-line-status { row-gap: 4px; }
-  .tmb-board .tmb-alert-symbol { width: 1.25em; height: 1.25em; vertical-align: -0.25em; }
+  /* TMB-prefixed classes keep these styles local to the plugin. */
+  .tmb-heading { align-items: baseline; }
+  .tmb-heading .title { flex: 1; }
+  .tmb-tab { padding-bottom: 3px; border-bottom: 3px solid currentColor; }
+  .tmb-line-card { gap: 10px; min-height: 68px; padding: 10px 10px 10px 14px; border: 1px solid var(--gray-50); overflow: hidden; }
+  .tmb-line-rail { position: absolute; inset: 0 auto 0 0; width: 5px; }
+  .tmb-line-badge { flex-shrink: 0; width: 38px; height: 38px; line-height: 1; gap: 0; }
+  .tmb-line-branch { font-size: 0.7em; }
+  .tmb-line-route { display: block; margin-bottom: 5px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tmb-line-status { row-gap: 4px; }
+  .tmb-line-status > .label { gap: 4px; }
+  .tmb-card-grid, .tmb-source { flex-shrink: 0; }
+  .tmb-status-dot { flex-shrink: 0; width: 10px; height: 10px; border: 1px solid var(--black); border-radius: 50%; }
+  .tmb-alert-symbol { width: 1.25em; height: 1.25em; }
   .tmb-board--full .tmb-source, .tmb-board--quadrant .tmb-more { margin-top: auto; }
-  .tmb-board .tmb-source .qr-code { display: block; box-sizing: content-box; width: 84px; height: 84px; padding: 11px; background: var(--white); }
-  .tmb-board .tmb-state { margin: auto; }
-  .tmb-board .tmb-state-symbol { margin: 0 auto 12px; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; font-size: 30px; }
-  .tmb-board .tmb-state .description { margin: 8px auto 0; max-width: 32em; }
-  .tmb-board--half_horizontal .tmb-line-card, .tmb-board--half_vertical .tmb-line-card, .tmb-board--quadrant .tmb-line-card { min-height: 46px; padding: 5px 7px 5px 11px; gap: 7px; }
-  .tmb-board--half_horizontal .tmb-line-badge, .tmb-board--half_vertical .tmb-line-badge, .tmb-board--quadrant .tmb-line-badge { min-width: 32px; padding: 4px; }
-  .tmb-board--half_horizontal .tmb-line-route, .tmb-board--half_vertical .tmb-line-route, .tmb-board--quadrant .tmb-line-route { margin-bottom: 1px; }
-  .tmb-board--quadrant .tmb-line-effect { display: none; }
-  .screen--lg .tmb-board .tmb-line-card { min-height: 92px; padding: 14px 16px 14px 22px; gap: 16px; }
+  .tmb-source .qr-code { display: block; box-sizing: content-box; width: 84px; height: 84px; padding: 11px; background: var(--white); }
+  .tmb-state { margin: auto; }
+  .tmb-state-symbol { margin: 0 auto 12px; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; font-size: 30px; }
+  .tmb-state .description { margin: 8px auto 0; max-width: 32em; }
+  .tmb-board--compact .tmb-line-card { min-height: 42px; padding: 3px 7px 3px 11px; gap: 7px; }
+  .tmb-board--compact .tmb-line-badge { width: 32px; height: 32px; }
+  .tmb-board--compact .tmb-line-route { margin-bottom: 1px; }
+  .screen--lg .tmb-board .tmb-line-card { min-height: 96px; padding: 14px 16px 14px 22px; gap: 16px; }
   .screen--lg .tmb-board .tmb-line-rail { width: 7px; }
-  .screen--lg .tmb-board .tmb-line-badge { min-width: 52px; padding: 10px 7px; }
+  .screen--lg .tmb-board .tmb-line-badge { width: 52px; height: 52px; }
+  .screen--lg .tmb-board .tmb-status-dot { width: 14px; height: 14px; }
   .screen--lg .tmb-board .tmb-source .qr-code { width: 144px; height: 144px; padding: 12px; }
-  .tmb-board--dense .tmb-card-grid { gap: 5px 10px; }
-  .tmb-board--dense .tmb-line-card { min-height: 42px; padding: 4px 8px 4px 12px; }
-  .tmb-board--dense .tmb-line-badge { min-width: 34px; padding: 4px; }
-  .tmb-board--dense .tmb-line-route { margin-bottom: 1px; }
+  .tmb-board--dense .tmb-card-grid { gap: 3px 10px; }
+  .tmb-board--dense .tmb-line-card { min-height: 36px; padding: 2px 8px 2px 12px; }
+  .tmb-board--dense .tmb-line-badge { width: 28px; height: 28px; }
+  .tmb-board--dense .tmb-line-route { margin-bottom: 0; }
+  .tmb-board--dense .tmb-alert-symbol { width: 1em; height: 1em; }
   .screen--lg .tmb-board--dense .tmb-line-card { min-height: 64px; padding: 8px 12px 8px 18px; }
   .screen--lg .tmb-board--dense .tmb-source .qr-code { width: 96px; height: 96px; padding: 8px; }
-  .screen--lg .tmb-board--half_horizontal .tmb-line-card, .screen--lg .tmb-board--half_vertical .tmb-line-card, .screen--lg .tmb-board--quadrant .tmb-line-card { min-height: 64px; padding: 8px 10px 8px 16px; gap: 10px; }
-  .screen--1bit:not([class*="screen--color-"]) .tmb-line-badge,
-  .screen--2bit:not([class*="screen--color-"]) .tmb-line-badge,
-  .screen--4bit:not([class*="screen--color-"]) .tmb-line-badge { color: var(--white) !important; -webkit-text-fill-color: var(--white) !important; background: var(--black) !important; }
-  .screen--1bit:not([class*="screen--color-"]) .tmb-tab,
-  .screen--2bit:not([class*="screen--color-"]) .tmb-tab,
-  .screen--4bit:not([class*="screen--color-"]) .tmb-tab { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
-  .screen:not([class*="screen--color-"]) .tmb-alert-symbol { color: var(--black) !important; }
+  .screen--lg .tmb-board--compact .tmb-line-card { min-height: 64px; padding: 7px 10px 7px 16px; gap: 10px; }
+  :is(.screen--1bit, .screen--2bit, .screen--4bit):not([class*="screen--color-"]) .tmb-line-badge { color: var(--white) !important; -webkit-text-fill-color: var(--white) !important; background: var(--black) !important; }
+  .screen:not([class*="screen--color-"]) :is(.tmb-tab, .tmb-alert-symbol) { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
+  .screen:not([class*="screen--color-"]) .tmb-status-dot { background: var(--black) !important; }
   .screen--color-4bwry .tmb-alert-symbol { color: var(--red) !important; }
   .screen--color-4bwry .tmb-line-badge.bg--green { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
   .screen--lg .tmb-board .tmb-state-symbol { width: 72px; height: 72px; font-size: 44px; }
@@ -117,27 +49,47 @@
     {% if line_parts[0] == line_id %}{% assign route = line_parts[1] %}{% break %}{% endif %}
   {% endfor %}
   {% assign line_notice_count = 0 %}
-  {% assign line_status = '' %}
-  {% assign line_effect_code = '' %}
+  {% assign traffic_rank = 0 %}
+  {% assign traffic_label = words[24] %}
+  {% assign traffic_color = 'bg--yellow' %}
+  {% assign infrastructure = false %}
+  {% assign uncertain = false %}
+  {% assign undated = false %}
   {% for index_string in ordered_indices %}
     {% assign alert_index = index_string | plus: 0 %}
-    {% assign alert = sorted_alerts[alert_index] %}
+    {% assign alert = alerts[alert_index] %}
     {% assign belongs_to_line = false %}
     {% for entity in alert.entities %}
       {% assign entity_line_id = entity.line_name | strip %}
       {% assign entity_line_code = entity.line_code | append: '' %}
       {% if entity_line_id == blank and entity_line_code == '99' %}{% assign entity_line_id = 'FM' %}{% endif %}
-      {% if entity_line_id == line_id %}{% assign belongs_to_line = true %}{% break %}{% endif %}
+      {% if entity_line_id == line_id or entity_line_id == 'ALL' or entity_line_code == 'ALL' %}{% assign belongs_to_line = true %}{% break %}{% endif %}
     {% endfor %}
-    {% if belongs_to_line %}
-      {% assign line_notice_count = line_notice_count | plus: 1 %}
-      {% assign alert_status = alert.categories.effect_status | upcase %}
-      {% if alert_status == 'SEVERE' or line_status == blank %}{% assign line_status = alert_status %}{% endif %}
-      {% if line_effect_code == blank %}{% assign line_effect_code = alert.categories.effect_code | default: alert.effect.code | upcase %}{% endif %}
-    {% endif %}
+    {% unless belongs_to_line %}{% continue %}{% endunless %}
+    {% assign line_notice_count = line_notice_count | plus: 1 %}
+    {% assign token = index_string | prepend: ',' | append: ',' %}
+    {% if undated_indices contains token %}{% assign undated = true %}{% endif %}
+    {% assign effect_type = alert.categories.effect_type | default: alert.effect.type | upcase %}
+    {% assign effect_code = alert.categories.effect_code | default: alert.effect.code | upcase %}
+    {% assign status = alert.categories.effect_status | default: alert.effect.status | upcase %}
+    {% if status == 'NO_DATA' or effect_code == 'PP99' %}{% assign uncertain = true %}{% endif %}
+    {% case effect_type %}
+      {% when 'TRAFFIC' %}
+        {% assign rank = 1 %}{% assign label = words[24] %}
+        {% case effect_code %}
+          {% when 'PP1', 'NP3' %}{% assign rank = 2 %}{% assign label = words[21] %}
+          {% when 'PP5', 'PP10' %}{% assign rank = 3 %}{% assign label = words[23] %}
+          {% when 'NP1', 'NP2', 'NP9' %}{% assign rank = 3 %}{% assign label = words[26] %}
+          {% when 'PP99' %}{% assign rank = 0 %}
+        {% endcase %}
+        {% if status == 'NO_DATA' %}{% assign rank = 0 %}{% endif %}
+        {% if rank > traffic_rank %}{% assign traffic_rank = rank %}{% assign traffic_label = label %}{% endif %}
+        {% if status == 'SEVERE' or status == 'CRITICAL' or rank == 3 %}{% assign traffic_color = 'bg--red' %}{% endif %}
+      {% when 'INFRASTRUCTURE' %}{% assign infrastructure = true %}
+      {% else %}{% assign uncertain = true %}
+    {% endcase %}
   {% endfor %}
-  {% assign line_color = 'bg--black' %}
-  {% assign line_text = 'text--white' %}
+  {% assign line_color = 'bg--black' %}{% assign line_text = 'text--white' %}
   {% case line_id %}
     {% when 'L1' %}{% assign line_color = 'bg--red' %}
     {% when 'L2' %}{% assign line_color = 'bg--purple' %}
@@ -147,20 +99,102 @@
     {% when 'L9N', 'L9S' %}{% assign line_color = 'bg--orange' %}
     {% when 'L10N', 'L10S' %}{% assign line_color = 'bg--cyan' %}{% assign line_text = 'text--black' %}
   {% endcase %}
-  {% assign line_status_label = line_status | default: words[11] %}
-  {% case line_status %}{% when 'SEVERE' %}{% assign line_status_label = words[9] %}{% when 'WARNING' %}{% assign line_status_label = words[10] %}{% when 'INFO', 'INFORMATION' %}{% assign line_status_label = words[11] %}{% endcase %}
-  {% assign line_effect_label = words[22] %}
-  {% case line_effect_code %}{% when 'PP1', 'NP3' %}{% assign line_effect_label = words[21] %}{% when 'PP5', 'PP10' %}{% assign line_effect_label = words[23] %}{% when 'PP11', 'NP12' %}{% assign line_effect_label = words[24] %}{% when 'PP99' %}{% assign line_effect_label = words[25] %}{% when 'NP1', 'NP2', 'NP9' %}{% assign line_effect_label = words[26] %}{% endcase %}
   <div class="item tmb-line-card" data-line-id="{{ line_id | escape }}">
     <span class="tmb-line-rail {{ line_color }}"></span>
-    <div class="tmb-line-meta self--center"><span class="label lg:label--large tmb-line-badge text--center text--bold {{ line_color }} {{ line_text }}">{{ line_id | escape }}</span></div>
-    <div class="content tmb-content w--min-0">
+    <span class="label lg:label--large tmb-line-badge self--center flex flex--col flex--center-x flex--center-y text--bold {{ line_color }} {{ line_text }}">{% if line_id contains 'L9' or line_id contains 'L10' %}{{ line_id | remove: 'N' | remove: 'S' | escape }}<span class="tmb-line-branch">{{ line_id | slice: -1, 1 | escape }}</span>{% else %}{{ line_id | escape }}{% endif %}</span>
+    <div class="content w--min-0">
       <span class="title title--small lg:title--base tmb-line-route" data-clamp="1">{{ route | escape }}</span>
       <div class="tmb-line-status flex flex--row flex--wrap flex--center-y gap--[9px]">
-        <span class="label label--small lg:label--base"><svg class="tmb-alert-symbol {% if line_status == 'SEVERE' %}text--red{% else %}text--orange{% endif %}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M1.958 17.563c-.278 0-.486-.119-.625-.355s-.139-.472 0-.708L9.374 2.604c.153-.236.361-.354.625-.354s.473.118.625.354L18.666 16.5c.139.236.139.472 0 .708s-.347.355-.625.355H1.958Zm8.125-9.438a.609.609 0 0 0-.448.177.609.609 0 0 0-.177.448v3.375c0 .181.059.33.177.448a.609.609 0 0 0 .448.177c.18 0 .329-.059.448-.177a.609.609 0 0 0 .177-.448V8.75a.609.609 0 0 0-.177-.448.609.609 0 0 0-.448-.177Zm0 6.938a.62.62 0 0 0 .458-.198.647.647 0 0 0 .188-.469.596.596 0 0 0-.188-.448.642.642 0 0 0-.458-.177.626.626 0 0 0-.458.187.626.626 0 0 0-.188.459c0 .18.063.333.188.458s.278.188.458.188Zm-6.979 1.125h13.791L9.999 4.271 3.104 16.188Z"/></svg> {{ line_status_label | escape }}</span>
+        <span class="label label--small lg:label--base tmb-circulation">{% if traffic_rank > 0 %}<span class="tmb-status-dot {{ traffic_color }}" aria-hidden="true"></span>{{ traffic_label }}{% elsif undated %}{{ words[18] }}{% elsif uncertain %}{{ words[25] }}{% else %}<span class="tmb-status-dot bg--green" aria-hidden="true"></span>{{ words[27] }}{% endif %}</span>
+        {% if traffic_rank > 0 and undated %}<span class="label label--small lg:label--base">{{ words[18] }}</span>{% endif %}
+        {% if infrastructure %}<span class="label label--small lg:label--base"><svg class="tmb-alert-symbol text--orange" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 2 19 18H1Z"/><path d="M10 7v5m0 2v1"/></svg> {{ words[22] }}</span>{% endif %}
         <span class="label label--small lg:label--base">{{ line_notice_count }} {% if line_notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>
-        <span class="label label--small lg:label--base tmb-line-effect">{{ line_effect_label | escape }}</span>
       </div>
     </div>
   </div>
 {% endtemplate %}
+
+{% assign user_lang = trmnl.plugin_settings.custom_fields_values.userLanguage | default: "english" | downcase %}
+{% case user_lang %}
+  {% when "spanish" %}
+    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos vigentes|TMB no comunica incidencias vigentes en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Desde|Hasta|más|Avisos de servicio|Red de metro|Próximas afectaciones|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada|Servicio normal" | split: "|" %}
+  {% when "catalan" %}
+    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos vigents|TMB no comunica incidències vigents en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Des de|Fins a|més|Avisos de servei|Xarxa de metro|Properes afectacions|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada|Servei normal" | split: "|" %}
+  {% else %}
+    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No current service notices|TMB reports no current incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|From|Until|more|Service notices|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial service|Disruption|Service stopped|Service disruption|Info not available|Line stopped|Normal service" | split: "|" %}
+{% endcase %}
+{% assign data_available = false %}
+{% assign alerts_json_start = data.alerts | json | slice: 0, 1 %}
+{% if alerts_json_start == '[' %}{% assign data_available = true %}{% endif %}
+{% assign alerts = '' | split: ',' %}
+{% if data_available %}{% assign alerts = data.alerts %}{% endif %}
+{% assign now_s = 'now' | date: '%s' | plus: 0 %}
+{% assign urgent_indices = '' %}{% assign traffic_indices = '' %}{% assign severe_indices = '' %}{% assign other_indices = '' %}
+{% assign undated_indices = ',' %}
+{% assign notice_count = 0 %}{% assign upcoming_count = 0 %}{% assign undated_count = 0 %}
+{% comment %}Disruption windows determine current service, not publication dates.{% endcomment %}
+{% for alert in alerts %}
+  {% assign dated = false %}{% assign active = false %}{% assign upcoming = false %}
+  {% for window in alert.disruption_dates %}
+    {% assign begin_s = window.begin_date | plus: 0 %}{% assign end_s = window.end_date | plus: 0 %}
+    {% if begin_s > 9999999999 %}{% assign begin_s = begin_s | divided_by: 1000 %}{% endif %}
+    {% if end_s > 9999999999 %}{% assign end_s = end_s | divided_by: 1000 %}{% endif %}
+    {% if window.begin_date != nil and begin_s <= 0 %}{% continue %}{% endif %}
+    {% if window.end_date != nil and end_s <= 0 %}{% continue %}{% endif %}
+    {% if begin_s > 0 and end_s > 0 and begin_s > end_s %}{% continue %}{% endif %}
+    {% if begin_s > 0 or end_s > 0 %}
+      {% assign dated = true %}
+      {% if begin_s > now_s %}{% assign upcoming = true %}
+      {% elsif end_s <= 0 or end_s >= now_s %}{% assign active = true %}{% endif %}
+    {% endif %}
+  {% endfor %}
+  {% if dated and active == false %}
+    {% if upcoming %}{% assign upcoming_count = upcoming_count | plus: 1 %}{% endif %}
+    {% continue %}
+  {% endif %}
+  {% if dated == false %}
+    {% assign undated_indices = undated_indices | append: forloop.index0 | append: ',' %}
+    {% assign undated_count = undated_count | plus: 1 %}
+  {% endif %}
+  {% assign notice_count = notice_count | plus: 1 %}
+  {% assign effect_type = alert.categories.effect_type | default: alert.effect.type | upcase %}
+  {% assign status = alert.categories.effect_status | default: alert.effect.status | upcase %}
+  {% assign effect_code = alert.categories.effect_code | default: alert.effect.code | upcase %}
+  {% assign stopped_codes = 'PP5|PP10|NP1|NP2|NP9' | split: '|' %}
+  {% if effect_type == 'TRAFFIC' %}
+    {% if status == 'SEVERE' or status == 'CRITICAL' or stopped_codes contains effect_code %}{% assign urgent_indices = urgent_indices | append: forloop.index0 | append: ',' %}
+    {% else %}{% assign traffic_indices = traffic_indices | append: forloop.index0 | append: ',' %}{% endif %}
+  {% elsif status == 'SEVERE' or status == 'CRITICAL' %}{% assign severe_indices = severe_indices | append: forloop.index0 | append: ',' %}
+  {% else %}{% assign other_indices = other_indices | append: forloop.index0 | append: ',' %}{% endif %}
+{% endfor %}
+{% assign ordered_indices = urgent_indices | append: traffic_indices | append: severe_indices | append: other_indices | split: ',' %}
+{% assign affected_ids = '|' %}{% assign affected_count = 0 %}{% assign network_alert = false %}
+{% for index_string in ordered_indices %}
+  {% assign alert_index = index_string | plus: 0 %}
+  {% assign alert = alerts[alert_index] %}
+  {% for entity in alert.entities %}
+    {% assign line_id = entity.line_name | strip %}{% assign line_code = entity.line_code | append: '' %}
+    {% if line_id == 'ALL' or line_code == 'ALL' %}{% assign network_alert = true %}{% continue %}{% endif %}
+    {% if line_id == blank and line_code == '99' %}{% assign line_id = 'FM' %}{% endif %}
+    {% assign token = line_id | prepend: '|' | append: '|' %}
+    {% unless line_id == blank or line_id contains '|' or affected_ids contains token %}
+      {% assign affected_ids = affected_ids | append: line_id | append: '|' %}
+      {% assign affected_count = affected_count | plus: 1 %}
+    {% endunless %}
+  {% endfor %}
+{% endfor %}
+{% if network_alert %}{% assign affected_ids = 'L1|L2|L3|L4|L5|L9N|L9S|L10N|L10S|L11|FM' %}{% assign affected_count = 11 %}{% endif %}
+{% assign affected_line_ids = affected_ids | split: '|' %}
+{% assign lines_data = "L1;Hospital de Bellvitge / Fondo~L2;Paral·lel / Badalona Pompeu Fabra~L3;Zona Universitària / Trinitat Nova~L4;La Pau / Trinitat Nova~L5;Cornellà Centre / Vall d’Hebron~L9N;La Sagrera / Can Zam~L9S;Aeroport T1 / Zona Universitària~L10N;La Sagrera / Gorg~L10S;ZAL | Riu Vell / Collblanc~L11;Trinitat Nova / Can Cuiàs~FM;Paral·lel / Parc de Montjuïc" | split: '~' %}
+{% assign source_url = 'https://www.tmb.cat/en/barcelona-transport/status-metro-network' %}
+{% case user_lang %}{% when 'spanish' %}{% assign source_url = 'https://www.tmb.cat/es/transporte-barcelona/estado-red-metro' %}{% when 'catalan' %}{% assign source_url = 'https://www.tmb.cat/ca/transport-barcelona/estat-xarxa-metro' %}{% endcase %}
+{%- capture svg_logo -%}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.00071907 -0.0010941 93.88 70.99" width="256" height="256">
+	<path d="M73 37.14H69.52l-.99 3.53h3.61c.53-.04 1.08-.06 1.65-.55.37-.28.67-.72.8-1.18.48-1.7-1.05-1.78-1.58-1.8Zm1.78-6.9H71.46l-.87 3.09h3.2c.54 0 1.88 0 2.31-1.52.41-1.5-.81-1.56-1.32-1.58ZM61.71 44.58 66.8 26.39H77.57c1.12.05 3.21.13 4.2 1.47.61.77.69 1.98.36 3.14-.38 1.34-1.26 2.47-2.18 3.19-.63.49-1.15.7-1.82.98.69.21 1.31.39 1.83 1.11.75 1 .59 2.19.34 3.09-.37 1.37-1.18 2.78-2.37 3.71-1.75 1.39-3.65 1.45-5.08 1.5H61.72Zm-25.24-0 5.09-18.19h8.22l-.11 8.4c-.1 1.8-.14 2.21-.34 3.86.96-2.24 1.2-2.7 2.1-4.46l4.24-7.8h8.22L58.8 44.58H53.33l2.94-10.51c.41-1.34.52-1.68 1.06-3.22-.7 1.36-.82 1.62-1.55 2.94L49.74 44.58H45.47l.05-10.23c.02-1.47 0-1.5.1-3.4-.23 1.14-.29 1.42-.58 2.45L41.91 44.58H36.45ZM24.68 26.36H39.64l-1.26 4.51H33.77L29.93 44.58H24.19l3.84-13.71H23.41ZM.58 48.95S.24 22.8 33.93 12.63c0 0-26.27 11.87-26.27 33.8 0 11.54 7.77 24.56 31.98 24.56S87.72 51.8 92.4 36.38C97.09 20.96 90.3 9.44 76.19 3.37 60.77-3.25 35.99.18 20.23 11.03-5.28 28.59.58 48.95.58 48.95" fill="#000000"/>
+</svg>
+{%- endcapture -%}
+{%- capture affected_summary -%}
+  {%- if data_available -%}
+    {{- affected_count }} {% if affected_count == 1 %}{{ words[3] }}{% else %}{{ words[4] }}{% endif -%}
+  {%- endif -%}
+{%- endcapture -%}
