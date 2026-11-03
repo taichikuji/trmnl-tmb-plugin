@@ -78,6 +78,10 @@ assert(render([alert(windows: [{ 'begin_date' => NOW - 60, 'end_date' => nil }])
 end
 html = render([partial, alert('L2', windows: [])])
 assert(text(card(html, 'L2')).include?('Partial service'), 'Undated station notice must not mask known circulation restrictions')
+{ 'English' => 'Undated', 'Spanish' => 'Sin fecha', 'Catalan' => 'Sense data' }.each do |language, warning|
+  html = render([partial, alert('L2', windows: [])], language: language)
+  assert(text(card(html, 'L2')).include?(warning), "#{language}: retain the date warning alongside circulation status")
+end
 
 stopped = alert('L3', code: 'NP1', type: 'TRAFFIC', status: 'CRITICAL')
 html = render([partial, stopped])
@@ -112,7 +116,15 @@ LAYOUTS.each do |layout, limit|
   assert(html.scan(/data-line-id="([^"]+)"/).flatten.length == limit, "#{layout}: preserve capacity")
   assert(text(html).include?("+#{11 - limit} more"), "#{layout}: show remaining count") if limit < 11
   assert(html.scan('class="title_bar"').length == 1, "#{layout}: exactly one native title bar")
+  assert(!html.include?('<script'), "#{layout}: keep layouts free of scripts")
 end
+(1..11).each do |count|
+  html = render(LINES.first(count).map { |line| alert(line) })
+  assert(html.scan(/data-line-id="([^"]+)"/).flatten == LINES.first(count), "#{count} lines: keep every affected line")
+end
+html = render(Array.new(20) { alert })
+assert(html.scan(/data-line-id="([^"]+)"/).flatten == ['L1'], 'Many notices on one line must stay in one card')
+assert(text(html).include?('20 notices'), 'Keep the full notice count on a single affected line')
 assert(text(card(render([alert('L10S')]), 'L10S')).include?('ZAL | Riu Vell / Collblanc'), 'Preserve the pipe inside the L10S route')
 html = render([alert('<script>')], name: '<img onerror=alert(1)>')
 assert(html.include?('&lt;script&gt;') && html.include?('&lt;img onerror=alert(1)&gt;'), 'Escape feed values and the instance name')

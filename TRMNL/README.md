@@ -12,7 +12,7 @@ The plugin icon is stored in the TRMNL bundle and referenced from settings.yml.
 
 ## Previews
 
-Previews render the current Liquid templates with three synthetic service notices for L1, L2 and L3, including partial service and station disruptions. They are demo images and do not represent live TMB status.
+Previews render the current Liquid templates with seven affected lines, multiple notices per line, circulation and station disruptions, and an upcoming notice. They use synthetic data and do not represent live TMB status.
 
 | Full View | Half Horizontal View |
 |------------|----------------------|
@@ -39,6 +39,8 @@ Previews render the current Liquid templates with three synthetic service notice
 - **quadrant.liquid**: The two highest-priority affected lines plus the remaining-line count.
 
 Each layout owns its markup and uses Framework 3.3.1 responsive clamps, overflow handling and palette-aware color utilities. The same markup renders in grayscale, on the black/white/red/yellow BWRY palette, and at TRMNL X landscape or portrait sizes.
+
+The full layout keeps normal card spacing through seven affected lines on OG and nine on X. Above those counts, cards share the remaining height above the QR code. Density depends on affected lines, not the number of notices.
 
 Run the native Liquid regression checks from the repository root:
 

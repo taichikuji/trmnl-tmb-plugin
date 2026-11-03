@@ -4,42 +4,33 @@
   .tmb-heading .title { flex: 1; }
   .tmb-tab { padding-bottom: 3px; border-bottom: 3px solid currentColor; }
   .tmb-line-card { gap: 10px; min-height: 68px; padding: 10px 10px 10px 14px; border: 1px solid var(--gray-50); overflow: hidden; }
-  .tmb-line-rail { position: absolute; inset: 0 auto 0 0; width: 5px; }
-  .tmb-line-badge { flex-shrink: 0; width: 38px; height: 38px; line-height: 1; gap: 0; }
+  .tmb-line-badge { flex-shrink: 0; line-height: 1; gap: 0; }
   .tmb-line-branch { font-size: 0.7em; }
   .tmb-line-route { display: block; margin-bottom: 5px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tmb-line-status { row-gap: 4px; }
-  .tmb-line-status > .label { gap: 4px; }
-  .tmb-card-grid, .tmb-source { flex-shrink: 0; }
-  .tmb-status-dot { flex-shrink: 0; width: 10px; height: 10px; border: 1px solid var(--black); border-radius: 50%; }
-  .tmb-alert-symbol { width: 1.25em; height: 1.25em; }
+  .tmb-card-grid + .tmb-source { width: calc(50% - 5px); }
+  .tmb-status-dot { flex-shrink: 0; border: 1px solid var(--black); }
   .tmb-board--full .tmb-source, .tmb-board--quadrant .tmb-more { margin-top: auto; }
   .tmb-source .qr-code { display: block; box-sizing: content-box; width: 84px; height: 84px; padding: 11px; background: var(--white); }
   .tmb-state { margin: auto; }
-  .tmb-state-symbol { margin: 0 auto 12px; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; font-size: 30px; }
+  .tmb-state-symbol { margin: 0 auto 12px; border: 2px solid currentColor; border-radius: 50%; font-size: 30px; }
   .tmb-state .description { margin: 8px auto 0; max-width: 32em; }
-  .tmb-board--compact .tmb-line-card { min-height: 42px; padding: 3px 7px 3px 11px; gap: 7px; }
-  .tmb-board--compact .tmb-line-badge { width: 32px; height: 32px; }
   .tmb-board--compact .tmb-line-route { margin-bottom: 1px; }
+  .tmb-board--compact .tmb-line-card { min-height: 42px; padding: 3px 7px 3px 11px; gap: 7px; }
   .screen--lg .tmb-board .tmb-line-card { min-height: 96px; padding: 14px 16px 14px 22px; gap: 16px; }
-  .screen--lg .tmb-board .tmb-line-rail { width: 7px; }
-  .screen--lg .tmb-board .tmb-line-badge { width: 52px; height: 52px; }
-  .screen--lg .tmb-board .tmb-status-dot { width: 14px; height: 14px; }
   .screen--lg .tmb-board .tmb-source .qr-code { width: 144px; height: 144px; padding: 12px; }
-  .tmb-board--dense .tmb-card-grid { gap: 3px 10px; }
-  .tmb-board--dense .tmb-line-card { min-height: 36px; padding: 2px 8px 2px 12px; }
-  .tmb-board--dense .tmb-line-badge { width: 28px; height: 28px; }
-  .tmb-board--dense .tmb-line-route { margin-bottom: 0; }
-  .tmb-board--dense .tmb-alert-symbol { width: 1em; height: 1em; }
-  .screen--lg .tmb-board--dense .tmb-line-card { min-height: 64px; padding: 8px 12px 8px 18px; }
-  .screen--lg .tmb-board--dense .tmb-source .qr-code { width: 96px; height: 96px; padding: 8px; }
+  .screen:not(.screen--lg) .tmb-board--dense .tmb-card-grid { flex: 1; margin-bottom: 112px; grid-auto-rows: 1fr; gap: 3px 10px; }
+  .screen:not(.screen--lg) .tmb-board--dense .tmb-line-route { margin-bottom: 0; }
+  .screen:not(.screen--lg) .tmb-board--dense .tmb-line-card { min-height: 36px; padding: 2px 8px 2px 12px; }
+  .screen--lg .tmb-board--dense-x .tmb-card-grid { flex: 1; margin-bottom: 128px; grid-auto-rows: 1fr; gap: 3px 10px; }
+  .screen--lg .tmb-board--dense-x .tmb-line-card { min-height: 64px; padding: 8px 12px 8px 18px; }
+  .screen--lg .tmb-board--dense-x .tmb-source .qr-code { width: 96px; height: 96px; padding: 8px; }
   .screen--lg .tmb-board--compact .tmb-line-card { min-height: 64px; padding: 7px 10px 7px 16px; gap: 10px; }
   :is(.screen--1bit, .screen--2bit, .screen--4bit):not([class*="screen--color-"]) .tmb-line-badge { color: var(--white) !important; -webkit-text-fill-color: var(--white) !important; background: var(--black) !important; }
   .screen:not([class*="screen--color-"]) :is(.tmb-tab, .tmb-alert-symbol) { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
   .screen:not([class*="screen--color-"]) .tmb-status-dot { background: var(--black) !important; }
   .screen--color-4bwry .tmb-alert-symbol { color: var(--red) !important; }
   .screen--color-4bwry .tmb-line-badge.bg--green { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
-  .screen--lg .tmb-board .tmb-state-symbol { width: 72px; height: 72px; font-size: 44px; }
+  .screen--lg .tmb-board .tmb-state-symbol { font-size: 44px; }
 </style>
 
 {% template line_card %}
@@ -100,15 +91,15 @@
     {% when 'L10N', 'L10S' %}{% assign line_color = 'bg--cyan' %}{% assign line_text = 'text--black' %}
   {% endcase %}
   <div class="item tmb-line-card" data-line-id="{{ line_id | escape }}">
-    <span class="tmb-line-rail {{ line_color }}"></span>
-    <span class="label lg:label--large tmb-line-badge self--center flex flex--col flex--center-x flex--center-y text--bold {{ line_color }} {{ line_text }}">{% if line_id contains 'L9' or line_id contains 'L10' %}{{ line_id | remove: 'N' | remove: 'S' | escape }}<span class="tmb-line-branch">{{ line_id | slice: -1, 1 | escape }}</span>{% else %}{{ line_id | escape }}{% endif %}</span>
+    <span class="tmb-line-rail absolute top--0 bottom--0 left--0 w--[5px] lg:w--[7px] {{ line_color }}"></span>
+    <span class="label lg:label--large tmb-line-badge {% if compact %}w--[32px] h--[32px]{% elsif line_count > 7 %}w--[28px] h--[28px]{% else %}w--[38px] h--[38px]{% endif %} lg:w--[52px] lg:h--[52px] self--center flex flex--col flex--center-x flex--center-y text--bold {{ line_color }} {{ line_text }}">{% if line_id contains 'L9' or line_id contains 'L10' %}{{ line_id | remove: 'N' | remove: 'S' | escape }}<span class="tmb-line-branch">{{ line_id | slice: -1, 1 | escape }}</span>{% else %}{{ line_id | escape }}{% endif %}</span>
     <div class="content w--min-0">
       <span class="title title--small lg:title--base tmb-line-route" data-clamp="1">{{ route | escape }}</span>
-      <div class="tmb-line-status flex flex--row flex--wrap flex--center-y gap--[9px]">
-        <span class="label label--small lg:label--base tmb-circulation">{% if traffic_rank > 0 %}<span class="tmb-status-dot {{ traffic_color }}" aria-hidden="true"></span>{{ traffic_label }}{% elsif undated %}{{ words[18] }}{% elsif uncertain %}{{ words[25] }}{% else %}<span class="tmb-status-dot bg--green" aria-hidden="true"></span>{{ words[27] }}{% endif %}</span>
-        {% if traffic_rank > 0 and undated %}<span class="label label--small lg:label--base">{{ words[18] }}</span>{% endif %}
-        {% if infrastructure %}<span class="label label--small lg:label--base"><svg class="tmb-alert-symbol text--orange" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 2 19 18H1Z"/><path d="M10 7v5m0 2v1"/></svg> {{ words[22] }}</span>{% endif %}
-        <span class="label label--small lg:label--base">{{ line_notice_count }} {% if line_notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>
+      <div class="tmb-line-status flex flex--row flex--wrap flex--center-y {% if compact %}gap--[4px]{% else %}gap--[9px] lg:gap--xsmall{% endif %}">
+        <span class="label label--small lg:label--base gap--[4px] tmb-circulation">{% if traffic_rank > 0 %}<span class="tmb-status-dot {{ traffic_color }} w--[10px] h--[10px] lg:w--[14px] lg:h--[14px] rounded--full" aria-hidden="true"></span>{{ traffic_label }}{% elsif undated %}{{ words[18] }}{% elsif uncertain %}{{ words[25] }}{% else %}<span class="tmb-status-dot bg--green w--[10px] h--[10px] lg:w--[14px] lg:h--[14px] rounded--full" aria-hidden="true"></span>{{ words[27] }}{% endif %}</span>
+        {% if traffic_rank > 0 and undated %}<span class="label label--small lg:label--base gap--[4px]">{{ words[28] }}</span>{% endif %}
+        {% if infrastructure %}<span class="label label--small lg:label--base gap--[4px]"><svg class="tmb-alert-symbol {% if compact or line_count <= 7 %}w--[15px] h--[15px]{% else %}w--[12px] h--[12px]{% endif %} lg:w--[20px] lg:h--[20px] text--orange" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 2 19 18H1Z"/><path d="M10 7v5m0 2v1"/></svg> {{ words[22] }}</span>{% endif %}
+        <span class="label label--small lg:label--base gap--[4px]">{{ line_notice_count }} {% if line_notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>
       </div>
     </div>
   </div>
@@ -117,11 +108,11 @@
 {% assign user_lang = trmnl.plugin_settings.custom_fields_values.userLanguage | default: "english" | downcase %}
 {% case user_lang %}
   {% when "spanish" %}
-    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos vigentes|TMB no comunica incidencias vigentes en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Desde|Hasta|más|Avisos de servicio|Red de metro|Próximas afectaciones|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada|Servicio normal" | split: "|" %}
+    {% assign words = "Líneas con incidencias|aviso|avisos|línea afectada|líneas afectadas|Sin avisos vigentes|TMB no comunica incidencias vigentes en los avisos consultados.|Datos no disponibles|No se ha podido leer la información de TMB.|Grave|Atención|Información|Desde|Hasta|más|Avisos de servicio|Red de metro|Próximas afectaciones|Fechas no disponibles|Más detalles en TMB|VIGENTE|Servicio parcial|Alteración|Servicio parado|Servicio alterado|Info no disponible|Línea parada|Servicio normal|Sin fecha" | split: "|" %}
   {% when "catalan" %}
-    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos vigents|TMB no comunica incidències vigents en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Des de|Fins a|més|Avisos de servei|Xarxa de metro|Properes afectacions|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada|Servei normal" | split: "|" %}
+    {% assign words = "Línies amb incidències|avís|avisos|línia afectada|línies afectades|Sense avisos vigents|TMB no comunica incidències vigents en els avisos consultats.|Dades no disponibles|No s’ha pogut llegir la informació de TMB.|Greu|Atenció|Informació|Des de|Fins a|més|Avisos de servei|Xarxa de metro|Properes afectacions|Dates no disponibles|Més detalls a TMB|VIGENT|Servei parcial|Alteració|Servei aturat|Servei alterat|Info no disponible|Línia aturada|Servei normal|Sense data" | split: "|" %}
   {% else %}
-    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No current service notices|TMB reports no current incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|From|Until|more|Service notices|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial service|Disruption|Service stopped|Service disruption|Info not available|Line stopped|Normal service" | split: "|" %}
+    {% assign words = "Lines with service notices|notice|notices|affected line|affected lines|No current service notices|TMB reports no current incidents in the notices checked.|Data unavailable|Could not read the service information from TMB.|Severe|Warning|Information|From|Until|more|Service notices|Metro network|Upcoming|Dates unavailable|More details on TMB|CURRENT|Partial service|Disruption|Service stopped|Service disruption|Info not available|Line stopped|Normal service|Undated" | split: "|" %}
 {% endcase %}
 {% assign data_available = false %}
 {% assign alerts_json_start = data.alerts | json | slice: 0, 1 %}

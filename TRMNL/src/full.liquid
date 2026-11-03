@@ -1,4 +1,4 @@
-<div class="layout layout--col layout--top gap--[6px] lg:gap--medium tmb-board tmb-board--full {% if affected_count > 6 %}tmb-board--dense{% endif %}">
+<div class="layout layout--col layout--top gap--[6px] lg:gap--medium tmb-board relative tmb-board--full {% if affected_count > 7 %}tmb-board--dense{% endif %} {% if affected_count > 9 %}tmb-board--dense-x{% endif %}">
   <div class="tmb-heading w--full flex flex--row flex--between flex--wrap gap--small border--h-50 pb--2">
     <span class="title lg:title--large text--bold w--min-0" data-clamp="1">{{ words[0] }}</span>
     {% if data_available %}<span class="label label--small lg:label--base">{{ notice_count }} {% if notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>{% endif %}
@@ -11,22 +11,22 @@
   {% endif %}
   {% if data_available == false or affected_count == 0 %}
     <div class="tmb-state w--full text--center">
-      <div class="tmb-state-symbol flex flex--row flex--center-x flex--center-y text--bold">{% if data_available and notice_count == 0 %}✓{% else %}!{% endif %}</div>
+      <div class="tmb-state-symbol w--[48px] h--[48px] lg:w--[72px] lg:h--[72px] flex flex--row flex--center-x flex--center-y text--bold">{% if data_available and notice_count == 0 %}✓{% else %}!{% endif %}</div>
       <span class="title lg:title--xlarge" data-clamp="2">{% if data_available and notice_count == 0 %}{{ words[5] }}{% else %}{{ words[7] }}{% endif %}</span>
       <div class="description lg:description--large" data-clamp="3">{% if data_available and notice_count == 0 %}{{ words[6] }}{% else %}{{ words[8] }}{% endif %}</div>
     </div>
   {% else %}
-    <div class="tmb-card-grid w--full h--min-0 grid grid--cols-2 gap--xsmall lg:gap--medium">
+    <div class="tmb-card-grid no-shrink w--full h--min-0 grid grid--cols-2 gap--xsmall lg:gap--medium">
       {% for line_id in affected_line_ids %}
         {% if line_id == blank %}{% continue %}{% endif %}
-        {% render 'line_card', line_id: line_id, alerts: alerts, ordered_indices: ordered_indices, undated_indices: undated_indices, lines_data: lines_data, words: words %}
+        {% render 'line_card', line_id: line_id, alerts: alerts, ordered_indices: ordered_indices, undated_indices: undated_indices, lines_data: lines_data, words: words, line_count: affected_count %}
       {% endfor %}
     </div>
   {% endif %}
   {% if data_available %}
-    <div class="tmb-source w--full flex flex--row flex--right flex--center-y gap--[10px] text--right">
+    <div class="tmb-source no-shrink {% if affected_count > 0 %}absolute bottom--0 right--0{% endif %} w--full flex flex--row flex--right flex--center-y gap--[10px] text--right">
       <span class="label lg:label--large">{{ words[19] }}</span>
-      <span>{{ source_url | qr_code: 3, 'l' }}</span>
+      <span class="no-shrink">{{ source_url | qr_code: 3, 'l' }}</span>
     </div>
   {% endif %}
 </div>

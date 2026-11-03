@@ -10,18 +10,18 @@
   {% endif %}
   {% if data_available == false or affected_count == 0 %}
     <div class="tmb-state w--full text--center">
-      <div class="tmb-state-symbol flex flex--row flex--center-x flex--center-y text--bold">{% if data_available and notice_count == 0 %}✓{% else %}!{% endif %}</div>
+      <div class="tmb-state-symbol w--[48px] h--[48px] lg:w--[72px] lg:h--[72px] flex flex--row flex--center-x flex--center-y text--bold">{% if data_available and notice_count == 0 %}✓{% else %}!{% endif %}</div>
       <span class="title lg:title--xlarge" data-clamp="2">{% if data_available and notice_count == 0 %}{{ words[5] }}{% else %}{{ words[7] }}{% endif %}</span>
       <div class="description lg:description--large" data-clamp="3">{% if data_available and notice_count == 0 %}{{ words[6] }}{% else %}{{ words[8] }}{% endif %}</div>
     </div>
   {% else %}
     {% assign cards_shown = 0 %}
-    <div class="tmb-card-grid w--full h--min-0 grid grid--cols-2 gap--xsmall lg:gap--medium">
+    <div class="tmb-card-grid no-shrink w--full h--min-0 grid grid--cols-2 gap--xsmall lg:gap--medium">
       {% for line_id in affected_line_ids %}
         {% if line_id == blank %}{% continue %}{% endif %}
         {% if cards_shown >= 4 %}{% break %}{% endif %}
         {% assign cards_shown = cards_shown | plus: 1 %}
-        {% render 'line_card', line_id: line_id, alerts: alerts, ordered_indices: ordered_indices, undated_indices: undated_indices, lines_data: lines_data, words: words %}
+        {% render 'line_card', line_id: line_id, alerts: alerts, ordered_indices: ordered_indices, undated_indices: undated_indices, lines_data: lines_data, words: words, compact: true %}
       {% endfor %}
     </div>
     {% if affected_count > cards_shown %}<span class="label label--small lg:label--base tmb-more">+{{ affected_count | minus: cards_shown }} {{ words[14] }}</span>{% endif %}
