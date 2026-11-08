@@ -12,7 +12,7 @@ Demo notices, not live service status. [All layout previews](TRMNL/README.md#pre
 
 ## Settings
 
-- **App ID** and **App Key:** register free at the [TMB developer portal](https://developer.tmb.cat/docs/getting-started).
+- **App ID** and **App Key** (optional): leave blank to use TMB's public website credentials, or [register your own](https://developer.tmb.cat/docs/getting-started).
 - **Language:** English, Spanish or Catalan (defaults to English).
 
 Cards separate circulation status from station disruptions. Upcoming notices are counted separately using disruption dates; notices without usable dates remain visible with a date warning.
@@ -21,14 +21,14 @@ Full shows all affected lines and the QR code; half horizontal shows up to four 
 
 ## Develop locally
 
-Install [trmnlp](https://github.com/usetrmnl/trmnlp). Add `custom_fields.userAppId`, `custom_fields.userAppKey` and `custom_fields.userLanguage` to your local [TRMNL/.trmnlp.yml](TRMNL/.trmnlp.yml), then run from the repository root:
+Install [trmnlp](https://github.com/usetrmnl/trmnlp). Optionally add `custom_fields.userAppId`, `custom_fields.userAppKey` and `custom_fields.userLanguage` to your local [TRMNL/.trmnlp.yml](TRMNL/.trmnlp.yml), then run from the repository root:
 
 ```sh
 cd TRMNL
 trmnlp serve
 ```
 
-Keep credentials out of commits and public previews. Templates and settings live in [TRMNL/src/](TRMNL/src/); see the [plugin guide](TRMNL/README.md) for setup and layout details.
+Keep personal credentials out of commits and public previews. Templates and settings live in [TRMNL/src/](TRMNL/src/); see the [plugin guide](TRMNL/README.md) for setup and layout details.
 
 Data from [TMB](https://www.tmb.cat/en/barcelona-transport/status-metro-network)'s Metro alerts feed.
 

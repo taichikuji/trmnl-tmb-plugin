@@ -11,7 +11,7 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB?app_id={{ userAppId }}&app_key={{ userAppKey }}'
+polling_url: 'https://api.tmb.cat/v1/alerts/metro/channels/WEB?app_id={{ userAppId | default: "4c132798" }}&app_key={{ userAppKey | default: "a828910cef5a0376607986191db19d14" }}'
 polling_headers: ''
 polling_body: ''
 icon: media/icon.svg
@@ -21,12 +21,14 @@ custom_fields:
 - keyname: userAppId
   field_type: string
   name: App ID
-  description: Your app_id from the TMB developer portal.
+  optional: true
+  description: Optional. Leave blank to use TMB's public website credentials.
   help_text: Register for free at the <a href="https://developer.tmb.cat/docs/getting-started">developer site</a>.
 - keyname: userAppKey
   field_type: string
   name: App Key
-  description: Your app_key from the TMB developer portal.
+  optional: true
+  description: Optional. Leave blank to use TMB's public website credentials.
   help_text: Retrieve your app_id and app_key from the dashboard after signing up.
 - keyname: userLanguage
   field_type: select

@@ -51,7 +51,7 @@ docker run --rm --network none --entrypoint ruby \
 
 ## Setup
 
-Register at the [TMB developer portal](https://developer.tmb.cat/docs/getting-started), enter your App ID and App Key, choose a language, save, and Force Refresh. Keep credentials in your private settings; use synthetic notices for public previews.
+Leave App ID and App Key blank to use TMB's public website credentials, or register at the [TMB developer portal](https://developer.tmb.cat/docs/getting-started) and enter both of your own. Choose a language, save, and Force Refresh. Public credentials may be revoked; keep personal credentials in private settings and use synthetic notices for public previews.
 
 ## Public recipe review
 
