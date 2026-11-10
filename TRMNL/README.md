@@ -42,13 +42,6 @@ Each layout owns its markup and uses Framework 3.3.1 responsive clamps, overflow
 
 The full layout keeps normal card spacing through seven affected lines on OG and nine on X. Above those counts, cards share the remaining height above the QR code. Density depends on affected lines, not the number of notices.
 
-Run the native Liquid regression checks from the repository root:
-
-```sh
-docker run --rm --network none --entrypoint ruby \
-  -v "$PWD:/plugin:ro" -w /plugin trmnl/trmnlp:latest TRMNL/check.rb
-```
-
 ## Setup
 
 Leave App ID and App Key blank to use TMB's public website credentials, or register at the [TMB developer portal](https://developer.tmb.cat/docs/getting-started) and enter both of your own. Choose a language, save, and Force Refresh. Public credentials may be revoked; keep personal credentials in private settings and use synthetic notices for public previews.
@@ -59,4 +52,4 @@ The original plugin design, parsing logic and markup are also offered under [CC 
 
 All four layouts render a native title bar. Display icons are monochrome SVGs, so raster dithering is unnecessary. Data requests run in native polling; no Serverless fetch is needed.
 
-Before submitting, save each setting in TRMNL, check all four views on OG and X (landscape and portrait), use a public demo preview, and review CHEF feedback. Repository checks and a successful upload do not replace these dashboard checks or human approval.
+Before submitting, save each setting in TRMNL, check all four views on OG and X (landscape and portrait), use a public demo preview, and review CHEF feedback. A successful upload does not replace these dashboard checks or human approval.
