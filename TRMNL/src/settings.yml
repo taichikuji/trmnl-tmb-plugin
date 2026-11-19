@@ -45,14 +45,14 @@ custom_fields:
   name: About This Plugin
   description: >-
     Check Barcelona Metro service notices at a glance on your TRMNL. TMB Metro Alerts shows
-    circulation disruptions and station-related notices, grouped by metro line and
-    prioritized to make significant issues easier to spot. When no issues are reported, the
-    screen shows a normal-service state instead of looking empty. Choose English, Spanish or
+    circulation disruptions and station-related notices, grouped by metro line and prioritized
+    to make significant issues easier to spot. When no issues are reported, the screen shows a
+    normal-service state instead of looking empty. <br/><br/> Choose English, Spanish or
     Catalan for labels and available notice text. The full layout includes a QR code linking
-    to TMB's live status page so you can read further details before travelling. The plugin
-    refreshes from TMB's public alerts feed every 30 minutes. It works without entering
-    credentials by default, while allowing you to provide your own TMB API credentials if
-    preferred. Built for Barcelona commuters by Ivan Perez.
+    to TMB's live status page so you can read further details before travelling. <br/><br/>
+    The plugin refreshes from TMB's public alerts feed every 30 minutes. It works without
+    entering credentials by default, while allowing you to provide your own TMB API
+    credentials if preferred. Built for Barcelona commuters by Ivan Perez.
   category: "news,travel"
   learn_more_url: https://github.com/taichikuji/trmnl-tmb-plugin/tree/main/TRMNL#setup
   github_url: "https://github.com/taichikuji/trmnl-tmb-plugin"
