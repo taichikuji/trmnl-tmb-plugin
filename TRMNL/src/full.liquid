@@ -1,7 +1,6 @@
 <div class="layout layout--col layout--top gap--[6px] lg:gap--medium tmb-board relative tmb-board--full {% if affected_count > 7 %}tmb-board--dense{% endif %} {% if affected_count > 9 %}tmb-board--dense-x{% endif %}">
   <div class="tmb-heading w--full flex flex--row flex--between flex--wrap gap--small border--h-50 pb--2">
     <span class="title lg:title--large text--bold w--min-0" data-clamp="1">{{ words[0] }}</span>
-    {% if data_available %}<span class="label label--small lg:label--base">{{ notice_count }} {% if notice_count == 1 %}{{ words[1] }}{% else %}{{ words[2] }}{% endif %}</span>{% endif %}
   </div>
   {% if data_available %}
     <div class="tmb-tabs w--full flex flex--row flex--between flex--center-y gap--small">
@@ -33,5 +32,5 @@
 <div class="title_bar">
   <img class="image image--adaptive w--7 h--7" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="TMB" />
   <span class="title">{{ trmnl.plugin_settings.instance_name | default: 'TMB Alerts' | escape }}</span>
-  <span class="instance">{{ affected_summary }}</span>
+  <span class="instance">{{ notice_summary }}</span>
 </div>
